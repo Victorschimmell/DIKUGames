@@ -13,7 +13,7 @@ public class Game : DIKUGame {
             new Image(Path.Combine("Assets", "Images", "Player.png")));
     }
     public override void Render() {
-    //TODO: Render Game Entities
+        //TODO: Render Game Entities
         throw new System.NotImplementedException("Galaga game has nothing to render yet.");
     }
     public override void Update() {
