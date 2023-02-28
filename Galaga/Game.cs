@@ -22,8 +22,6 @@ public class Game : DIKUGame, IGameEventProcessor {
         eventBus.Subscribe(GameEventType.InputEvent, this);
     }
     public override void Render() {
-        player.Move();
-        player.Render();
     }
     public override void Update() {
         window.PollEvents();
