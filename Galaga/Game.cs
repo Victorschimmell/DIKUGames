@@ -14,6 +14,7 @@ namespace Galaga
 
         public override void Render()
         {
+            // TEST
             throw new System.NotImplementedException("Galaga game has nothing to render yet.");
         }
 
