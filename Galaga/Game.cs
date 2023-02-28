@@ -10,6 +10,8 @@ using System.Collections.Generic;
 
 namespace Galaga;
 public class Game : DIKUGame, IGameEventProcessor {
+    private EntityContainer<PlayerShot> playerShots;
+    private IBaseImage playerShotImage;
     private EntityContainer<Enemy> enemies;
     private GameEventBus eventBus;
     private Player player;
@@ -33,6 +35,9 @@ public class Game : DIKUGame, IGameEventProcessor {
                 new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 0.9f), new Vec2F(0.1f, 0.1f)),
                 new ImageStride(80, images)));
         }
+        // PlayerShot
+        playerShots = new EntityContainer<PlayerShot>();
+        playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
     }
     public override void Render() {
         player.Render();
@@ -86,5 +91,18 @@ public class Game : DIKUGame, IGameEventProcessor {
     void IGameEventProcessor.ProcessEvent(GameEvent gameEvent)
     {
         throw new System.NotImplementedException();
+    }
+
+    private void IterateShots() {
+        playerShots.Iterate(shot => {
+        // TODO: move the shot's shape
+            if ( /* TODO: guard against window borders */ ) {
+            // TODO: delete shot
+            } else {
+            enemies.Iterate(enemy => {
+            // TODO: if collision btw shot and enemy -> delete both entities
+                });
+            }
+        });
     }
 }
