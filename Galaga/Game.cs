@@ -7,6 +7,7 @@ using DIKUArcade.GUI;
 using DIKUArcade.Events;
 using DIKUArcade.Input;
 using System.Collections.Generic;
+using DIKUArcade.Physics;
 
 namespace Galaga;
 public class Game : DIKUGame, IGameEventProcessor {
@@ -42,11 +43,13 @@ public class Game : DIKUGame, IGameEventProcessor {
     public override void Render() {
         player.Render();
         enemies.RenderEntities();
+        playerShots.RenderEntities();
     }
     public override void Update() {
         window.PollEvents();
         eventBus.ProcessEventsSequentially();
         player.Move();
+        IterateShots();
     }
     private void KeyPress(KeyboardKey key) {
         switch (key) {
@@ -58,13 +61,16 @@ public class Game : DIKUGame, IGameEventProcessor {
                 player.SetMoveLeft(false);
                 player.SetMoveRight(true);
                 break;
+            case KeyboardKey.Space:
+                Vec2F pShot = player.GetPosition();
+                playerShots.AddEntity(new PlayerShot(new Vec2F(pShot.X+player.GetExtentX()/2-0.004f, pShot.Y), playerShotImage));
+                break;
             case KeyboardKey.Escape:
                 window.CloseWindow();
                 break;
         }
     }
     private void KeyRelease(KeyboardKey key) {
-    // TODO: switch on key string and disable the player's move direction
         switch (key) {
             case KeyboardKey.Left:
                 player.SetMoveLeft(false);
@@ -95,12 +101,16 @@ public class Game : DIKUGame, IGameEventProcessor {
 
     private void IterateShots() {
         playerShots.Iterate(shot => {
-        // TODO: move the shot's shape
-            if ( /* TODO: guard against window borders */ ) {
-            // TODO: delete shot
+            shot.Shape.MoveY(0.1f);
+            if (shot.Shape.Position.Y > 1) {
+                shot.DeleteEntity();
             } else {
             enemies.Iterate(enemy => {
-            // TODO: if collision btw shot and enemy -> delete both entities
+                if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision 
+                    == true) {
+                        shot.DeleteEntity();
+                        enemy.DeleteEntity();
+                    }
                 });
             }
         });
