@@ -36,6 +36,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public override void Render() {
         player.Render();
+        enemies.RenderEntities();
     }
     public override void Update() {
         window.PollEvents();
