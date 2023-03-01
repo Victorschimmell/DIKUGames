@@ -23,9 +23,11 @@ public class Game : DIKUGame, IGameEventProcessor {
             new Image(Path.Combine("Assets", "Images", "Player.png")));
         // EventBus
         eventBus = new GameEventBus();
-        eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent });
+        eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent,  
+            GameEventType.WindowEvent });
         window.SetKeyEventHandler(KeyHandler);
         eventBus.Subscribe(GameEventType.InputEvent, this);
+        eventBus.Subscribe(GameEventType.WindowEvent, this);
         // Enemies
         List<Image> images = ImageStride.CreateStrides
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
@@ -67,7 +69,10 @@ public class Game : DIKUGame, IGameEventProcessor {
                 playerShots.AddEntity(new PlayerShot(new Vec2F(pShot.X+sumExtent/2, pShot.Y), playerShotImage));
                 break;
             case KeyboardKey.Escape:
-                window.CloseWindow();
+                GameEvent windowClose = new GameEvent();
+                windowClose.EventType = GameEventType.WindowEvent;
+                windowClose.Message = "Close the window";
+                eventBus.RegisterEvent(windowClose);
                 break;
         }
     }
@@ -99,7 +104,13 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     void IGameEventProcessor.ProcessEvent(GameEvent gameEvent)
     {
-        throw new System.NotImplementedException();
+        switch (gameEvent.Message) {
+            case "Close the window":
+                window.CloseWindow();
+                break;
+            default:
+                break;
+        }
     }
 
     private void IterateShots() {
