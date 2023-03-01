@@ -63,7 +63,8 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
             case KeyboardKey.Space:
                 Vec2F pShot = player.GetPosition();
-                playerShots.AddEntity(new PlayerShot(new Vec2F(pShot.X+player.GetExtentX()/2-0.004f, pShot.Y), playerShotImage));
+                float sumExtent = player.GetExtent().X - PlayerShot.GetExtent().X;
+                playerShots.AddEntity(new PlayerShot(new Vec2F(pShot.X+sumExtent/2, pShot.Y), playerShotImage));
                 break;
             case KeyboardKey.Escape:
                 window.CloseWindow();

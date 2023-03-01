@@ -47,8 +47,8 @@ namespace Galaga {
             return this.shape.Position;
         }
 
-        public float GetExtentX() {
-            return shape.Extent.X;
+        public Vec2F GetExtent() {
+            return shape.Extent;
         }
     }
 }   
