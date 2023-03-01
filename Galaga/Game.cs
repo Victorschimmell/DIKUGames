@@ -80,6 +80,8 @@ public class Game : DIKUGame, IGameEventProcessor {
                 player.SetMoveLeft(false);
                 player.SetMoveRight(false);
                 break;
+            case KeyboardKey.Space:
+                break;
             case KeyboardKey.Escape:
                 break;
         }
@@ -101,13 +103,12 @@ public class Game : DIKUGame, IGameEventProcessor {
 
     private void IterateShots() {
         playerShots.Iterate(shot => {
-            shot.Shape.MoveY(0.1f);
+            shot.MoveShot();
             if (shot.Shape.Position.Y > 1) {
                 shot.DeleteEntity();
             } else {
             enemies.Iterate(enemy => {
-                if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision 
-                    == true) {
+                if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision) {
                         shot.DeleteEntity();
                         enemy.DeleteEntity();
                     }
