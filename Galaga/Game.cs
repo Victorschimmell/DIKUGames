@@ -8,6 +8,7 @@ using DIKUArcade.Events;
 using DIKUArcade.Input;
 using System.Collections.Generic;
 using DIKUArcade.Physics;
+using Galaga.Squadron;
 
 namespace Galaga;
 public class Game : DIKUGame, IGameEventProcessor {
@@ -18,8 +19,9 @@ public class Game : DIKUGame, IGameEventProcessor {
     private Player player;
     private AnimationContainer enemyExplosions;
     private List<Image> explosionStrides;
-    private List<Image> enemyStridesGreen;
     private const int EXPLOSION_LENGTH_MS = 500;
+    private List<Image> enemyStridesGreen;
+    private List<Image> enemyStridesBlue;
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         // Player
         player = new Player(
@@ -34,20 +36,17 @@ public class Game : DIKUGame, IGameEventProcessor {
         eventBus.Subscribe(GameEventType.WindowEvent, this);
         eventBus.Subscribe(GameEventType.MovementEvent, player);
         // Enemies
-        List<Image> images = ImageStride.CreateStrides
+        enemyStridesBlue = ImageStride.CreateStrides
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
-        const int numEnemies = 8;
-        enemies = new EntityContainer<Enemy>(numEnemies);
-        for (int i = 0; i < numEnemies; i++) {
-            enemies.AddEntity(new Enemy(
-                new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 0.9f), new Vec2F(0.1f, 0.1f)),
-                new ImageStride(80, images)));
-        }
+        enemyStridesGreen = ImageStride.CreateStrides(2, Path.Combine("Assets",
+            "Images", "GreenMonster.png"));
+        ISquadron squad =  new Squadron3(enemyStridesBlue, enemyStridesGreen);
+        enemies = squad.Enemies;
         // PlayerShot
         playerShots = new EntityContainer<PlayerShot>();
         playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
         // Explosions
-        enemyExplosions = new AnimationContainer(numEnemies);
+        enemyExplosions = new AnimationContainer(squad.MaxEnemies);
         explosionStrides = ImageStride.CreateStrides(8, 
             Path.Combine("Assets", "Images", "Explosion.png"));
     }

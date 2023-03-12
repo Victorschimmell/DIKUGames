@@ -2,6 +2,7 @@ using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using System.IO;
 using System.Collections.Generic;
+using DIKUArcade.Math;
 
 namespace Galaga;
 public class Enemy : Entity {
@@ -16,7 +17,7 @@ public class Enemy : Entity {
 
     public void TakeDamage() {
         hitPoints--;
-        if (hitPoints <= 3) {
+        if (hitPoints <= 5) {
             Enrage();
         }
         if (hitPoints <= 0) {
@@ -25,5 +26,6 @@ public class Enemy : Entity {
     }
     private void Enrage() {
         Image = new ImageStride(80, enemyStridesGreen);
+        Shape.AsDynamicShape().Direction = new Vec2F(0f,0.1f);
     }
 }
