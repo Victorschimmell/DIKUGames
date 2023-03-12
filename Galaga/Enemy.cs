@@ -24,6 +24,6 @@ public class Enemy : Entity {
         }
     }
     private void Enrage() {
-        //Image = enemyStridesGreen;
+        Image = new ImageStride(80, enemyStridesGreen);
     }
 }
