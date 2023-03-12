@@ -18,6 +18,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private Player player;
     private AnimationContainer enemyExplosions;
     private List<Image> explosionStrides;
+    private List<Image> enemyStridesGreen;
     private const int EXPLOSION_LENGTH_MS = 500;
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         // Player
@@ -26,11 +27,12 @@ public class Game : DIKUGame, IGameEventProcessor {
             new Image(Path.Combine("Assets", "Images", "Player.png")));
         // EventBus
         eventBus = new GameEventBus();
-        eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent,  
-            GameEventType.WindowEvent });
+        eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent,
+            GameEventType.WindowEvent, GameEventType.MovementEvent});
         window.SetKeyEventHandler(KeyHandler);
         eventBus.Subscribe(GameEventType.InputEvent, this);
         eventBus.Subscribe(GameEventType.WindowEvent, this);
+        eventBus.Subscribe(GameEventType.MovementEvent, player);
         // Enemies
         List<Image> images = ImageStride.CreateStrides
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
@@ -56,20 +58,24 @@ public class Game : DIKUGame, IGameEventProcessor {
         enemyExplosions.RenderAnimations();
     }
     public override void Update() {
-        window.PollEvents();
-        eventBus.ProcessEventsSequentially();
         player.Move();
         IterateShots();
+        window.PollEvents();
+        eventBus.ProcessEventsSequentially();
     }
     private void KeyPress(KeyboardKey key) {
         switch (key) {
             case KeyboardKey.Left:
-                player.SetMoveLeft(true);
-                player.SetMoveRight(false);
+                GameEvent MoveLeft = new GameEvent();
+                MoveLeft.EventType = GameEventType.MovementEvent;
+                MoveLeft.Message = "MoveLeft";
+                eventBus.RegisterEvent(MoveLeft);
                 break;
             case KeyboardKey.Right:
-                player.SetMoveLeft(false);
-                player.SetMoveRight(true);
+                GameEvent MoveRight = new GameEvent();
+                MoveRight.EventType = GameEventType.MovementEvent;
+                MoveRight.Message = "MoveRight";
+                eventBus.RegisterEvent(MoveRight);
                 break;
             case KeyboardKey.Space:
                 Vec2F pShot = player.GetPosition();
@@ -85,14 +91,15 @@ public class Game : DIKUGame, IGameEventProcessor {
         }
     }
     private void KeyRelease(KeyboardKey key) {
+        GameEvent MoveStop = new GameEvent();
+        MoveStop.EventType = GameEventType.MovementEvent;
+        MoveStop.Message = "MoveStop";
         switch (key) {
             case KeyboardKey.Left:
-                player.SetMoveLeft(false);
-                player.SetMoveRight(false);
+                eventBus.RegisterEvent(MoveStop);
                 break;
             case KeyboardKey.Right:
-                player.SetMoveLeft(false);
-                player.SetMoveRight(false);
+                eventBus.RegisterEvent(MoveStop);
                 break;
             case KeyboardKey.Space:
                 break;
@@ -129,16 +136,18 @@ public class Game : DIKUGame, IGameEventProcessor {
             } else {
             enemies.Iterate(enemy => {
                 if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision) {
-                        shot.DeleteEntity();
-                        enemy.DeleteEntity();
+                    shot.DeleteEntity();
+                    enemy.TakeDamage();
+                    if (enemy.IsDeleted()) {
                         AddExplosion(enemy.Shape.Position, enemy.Shape.Extent);
                     }
+                }
                 });
             }
         });
     }
     
-    public void AddExplosion(Vec2F position, Vec2F extent) {
+    private void AddExplosion(Vec2F position, Vec2F extent) {
         StationaryShape explosion = new StationaryShape(position, extent);
         ImageStride strideExplosion = new ImageStride(EXPLOSION_LENGTH_MS / 8, explosionStrides);
         enemyExplosions.AddAnimation(explosion, EXPLOSION_LENGTH_MS, strideExplosion);
