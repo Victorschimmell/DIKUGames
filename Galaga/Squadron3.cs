@@ -27,12 +27,14 @@ public class Squadron3 : ISquadron
             if (i <= maxEnemies / 2 - 1) {
                 enemies.AddEntity(new Enemy(
                 new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 0.9f - (i / 20f) ), new Vec2F(0.1f, 0.1f)),
-                new ImageStride(80, enemyStride)));
+                new ImageStride(80, enemyStride),
+                new ImageStride(80, alternativeEnemyStride)));
             }
             else {
                 enemies.AddEntity(new Enemy(
                 new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 0.9f - ((maxEnemies-i-1) / 20f)), new Vec2F(0.1f, 0.1f)),
-                new ImageStride(80, enemyStride)));
+                new ImageStride(80, enemyStride),
+                new ImageStride(80, alternativeEnemyStride)));
             }
         }
     }

@@ -7,12 +7,11 @@ using DIKUArcade.Math;
 namespace Galaga;
 public class Enemy : Entity {
     private int hitPoints;
-    private List<Image> enemyStridesGreen;
-    public Enemy(DynamicShape shape, IBaseImage image)
+    private ImageStride alternativeImage;
+    public Enemy(DynamicShape shape, IBaseImage image, IBaseImage alternativeImage)
         : base(shape, image) {
             hitPoints = 10;
-            enemyStridesGreen = ImageStride.CreateStrides(2, Path.Combine("Assets",
-            "Images", "GreenMonster.png"));
+            this.alternativeImage = alternativeImage as ImageStride;
         }
 
     public void TakeDamage() {
@@ -25,7 +24,7 @@ public class Enemy : Entity {
         }
     }
     private void Enrage() {
-        Image = new ImageStride(80, enemyStridesGreen);
+        Image = alternativeImage;
         Shape.AsDynamicShape().Direction = new Vec2F(0f,0.1f);
     }
 }
