@@ -1,5 +1,6 @@
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
+using DIKUArcade.Events;
 
 namespace Galaga {
     public class Health {
@@ -13,8 +14,14 @@ namespace Galaga {
     }
     // Remember to explaination your choice as to what happens
     //when losing health.
-    public void LoseHealth () {
+    public void LoseHealth (GameEventBus eventBus) {
         health -= 1;
+        if (health <= 0) {
+            GameEvent lose = new GameEvent();
+            lose.EventType = GameEventType.GameStateEvent;
+            lose.Message = "Game Over";
+            eventBus.RegisterEvent(lose);
+        }
     }
     public void RenderHealth () {
         display.SetText(health.ToString());

@@ -1,5 +1,6 @@
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
+using DIKUArcade.Math;
 using Galaga.MovementStrategy;
 using System.Collections.Generic;
 
@@ -12,5 +13,6 @@ public interface ISquadron {
         List<Image> alternativeEnemyStride);
 
     void ChangeStrategy(IMovementStrategy newStrategy);
+    void ChangeSpeed(Vec2F speed);
     }
 }

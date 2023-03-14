@@ -4,25 +4,26 @@ using DIKUArcade.Math;
 using DIKUArcade.Events;
 
 namespace Galaga {
-    public class Player: IGameEventProcessor {
-        private Entity entity;
+    public class Player: Entity, IGameEventProcessor {
+        //private Entity entity;
         private DynamicShape shape;
         private float moveLeft;
         private float moveRight;
         const float MOVEMENT_SPEED = 0.01f;
-        public Player(DynamicShape shape, IBaseImage image) {
-            entity = new Entity(shape, image);
+        public Player(DynamicShape shape, IBaseImage image): base(shape, image) {
             this.shape = shape;
             moveLeft = 0.0f;
             moveRight = 0.0f;
         }
         public void Render() {
-            entity.RenderEntity();
+            if (!IsDeleted()) {
+                RenderEntity();
+            }
         }
         public void Move() {
             // TODO: move the shape and guard against the window borders¨
             if (shape.Direction.X + shape.Position.X >= 0f && shape.Direction.X + shape.Position.X <= 1f-shape.Extent.X) {
-                entity.Shape.Move(shape.Direction);
+                Shape.Move(shape.Direction);
             }
 
         }

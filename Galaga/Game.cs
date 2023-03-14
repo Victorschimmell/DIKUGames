@@ -10,12 +10,12 @@ using System.Collections.Generic;
 using DIKUArcade.Physics;
 using Galaga.Squadron;
 using Galaga.MovementStrategy;
+using Galaga.RandomSquadronCreater;
 
 namespace Galaga;
 public class Game : DIKUGame, IGameEventProcessor {
     private EntityContainer<PlayerShot> playerShots;
     private IBaseImage playerShotImage;
-    //private EntityContainer<Enemy> enemies;
     private ISquadron squadron;
     private GameEventBus eventBus;
     private Player player;
@@ -25,7 +25,11 @@ public class Game : DIKUGame, IGameEventProcessor {
     private List<Image> enemyStridesGreen;
     private List<Image> enemyStridesBlue;
     private Health health;
+    private Vec2F enemySpeed;
+    private WindowArgs windowArgs;
+    private IRandomSquadronCreater squadCreator;
     public Game(WindowArgs windowArgs) : base(windowArgs) {
+        this.windowArgs = windowArgs;
         // Player
         player = new Player(
             new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
@@ -33,16 +37,18 @@ public class Game : DIKUGame, IGameEventProcessor {
         // EventBus
         eventBus = new GameEventBus();
         eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent,
-            GameEventType.WindowEvent, GameEventType.MovementEvent});
+            GameEventType.WindowEvent, GameEventType.MovementEvent, GameEventType.GameStateEvent});
         window.SetKeyEventHandler(KeyHandler);
         eventBus.Subscribe(GameEventType.InputEvent, this);
         eventBus.Subscribe(GameEventType.WindowEvent, this);
+        eventBus.Subscribe(GameEventType.GameStateEvent, this);
         eventBus.Subscribe(GameEventType.MovementEvent, player);
         // Enemies
         enemyStridesBlue = ImageStride.CreateStrides
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
         enemyStridesGreen = ImageStride.CreateStrides(2, Path.Combine("Assets",
             "Images", "GreenMonster.png"));
+        enemySpeed = new Vec2F(0f,-0.001f);
         // PlayerShot
         playerShots = new EntityContainer<PlayerShot>();
         playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
@@ -52,6 +58,8 @@ public class Game : DIKUGame, IGameEventProcessor {
 
         //health
         health = new Health(new Vec2F(0.05f, -0.6f), new Vec2F(0.7f, 0.7f));
+
+        squadCreator = new RSC1();
     }
     public override void Render() {
         player.Render();
@@ -125,13 +133,26 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     void IGameEventProcessor.ProcessEvent(GameEvent gameEvent)
     {
-        switch (gameEvent.Message) {
+        if (gameEvent.EventType == GameEventType.WindowEvent) {
+            switch (gameEvent.Message) {
             case "Close the window":
                 window.CloseWindow();
                 break;
             default:
                 break;
-        }
+        }}
+        else if (gameEvent.EventType == GameEventType.GameStateEvent) {
+            switch (gameEvent.Message) {
+            case "Game Over":
+                eventBus.Unsubscribe(GameEventType.MovementEvent, player);
+                player.DeleteEntity();
+                squadron.Enemies.Iterate(enemy => {
+                    enemy.DeleteEntity();
+                });
+                break;
+            default:
+                break;
+        }}
     }
 
     private void IterateShots() {
@@ -162,7 +183,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void UpdateHealth() {
         squadron.Enemies.Iterate(enemy => {
             if (enemy.Shape.Position.Y < 0) {
-                health.LoseHealth();
+                health.LoseHealth(eventBus);
                 enemy.DeleteEntity();
             }
         });
@@ -173,33 +194,14 @@ public class Game : DIKUGame, IGameEventProcessor {
         if (squadron == null) {
             doUpdate = true;
         }
-        else if (squadron.Enemies.CountEntities() == 0) {
+        else if (squadron.Enemies.CountEntities() == 0 && !player.IsDeleted()) {
             doUpdate = true;
         }
         if (doUpdate) {
-            System.Random random = new System.Random();
-            int rand = random.Next(3);
-            switch (rand) {
-                case 0:
-                squadron = new Squadron1(enemyStridesBlue, enemyStridesGreen);
-                break;
-                case 1:
-                squadron = new Squadron2(enemyStridesBlue, enemyStridesGreen);
-                break;
-                case 2:
-                squadron = new Squadron3(enemyStridesBlue, enemyStridesGreen);
-                break;
-            }
-            rand = random.Next(2);
-            switch (rand) {
-                case 0:
-                squadron.ChangeStrategy(new DownMove());
-                break;
-                case 1:
-                squadron.ChangeStrategy(new ZigZag());
-                break;
-            }
+            squadron = squadCreator.CreateSquad(enemyStridesBlue, enemyStridesGreen);   
             enemyExplosions = new AnimationContainer(squadron.MaxEnemies);
+            enemySpeed += new Vec2F(0f,-0.00025f);
+            squadron.ChangeSpeed(enemySpeed);
         }
     }
 }
