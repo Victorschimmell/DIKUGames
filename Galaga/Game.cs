@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using DIKUArcade.Physics;
 using Galaga.Squadron;
 using Galaga.RandomSquadronCreater;
+using Galaga.GameText;
 
 namespace Galaga;
 public class Game : DIKUGame, IGameEventProcessor {
@@ -23,10 +24,12 @@ public class Game : DIKUGame, IGameEventProcessor {
     private const int EXPLOSION_LENGTH_MS = 500;
     private List<Image> enemyStridesGreen;
     private List<Image> enemyStridesBlue;
-    private Health health;
     private Vec2F enemySpeed;
     private WindowArgs windowArgs;
     private IRandomSquadronCreater squadCreator;
+    private RoundCounter roundCounter;
+    private Health health;
+    private GameTextContainer gameTexts;
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         this.windowArgs = windowArgs;
         // Player
@@ -47,7 +50,7 @@ public class Game : DIKUGame, IGameEventProcessor {
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
         enemyStridesGreen = ImageStride.CreateStrides(2, Path.Combine("Assets",
             "Images", "GreenMonster.png"));
-        enemySpeed = new Vec2F(0f,-0.001f);
+        enemySpeed = new Vec2F(0f, -0.001f);
         // PlayerShot
         playerShots = new EntityContainer<PlayerShot>();
         playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
@@ -55,8 +58,13 @@ public class Game : DIKUGame, IGameEventProcessor {
         explosionStrides = ImageStride.CreateStrides(8, 
             Path.Combine("Assets", "Images", "Explosion.png"));
         enemyExplosions = new AnimationContainer(8);
-        //health
-        health = new Health(new Vec2F(0.05f, -0.6f), new Vec2F(0.7f, 0.7f));
+        //GameTexts
+        health = new Health(new Vec2F(0.02f, -0.4f), new Vec2F(0.5f, 0.5f));
+        gameTexts = new GameTextContainer();
+        gameTexts.AddText(health);
+        roundCounter = new RoundCounter(new Vec2F(0.02f, 0.5f), new Vec2F(0.5f, 0.5f));
+        gameTexts.AddText(roundCounter);
+        //Squads
         squadCreator = new RSC1();
     }
     public override void Render() {
@@ -64,7 +72,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         squadron.Enemies.RenderEntities();
         playerShots.RenderEntities();
         enemyExplosions.RenderAnimations();
-        health.RenderHealth();
+        gameTexts.RenderTexts();
     }
     public override void Update() {
         UpdateSquadron();
@@ -137,6 +145,8 @@ public class Game : DIKUGame, IGameEventProcessor {
                 squadron.Enemies.Iterate(enemy => {
                     enemy.DeleteEntity();
                 });
+                gameTexts.RemoveText(health);
+                gameTexts.AddText(new GameStateText("Game Over", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f)));
                 break;
             default:
                 break;
@@ -161,8 +171,6 @@ public class Game : DIKUGame, IGameEventProcessor {
             }
         });
     }
-
-    
     private void AddExplosion(Vec2F position, Vec2F extent) {
         StationaryShape explosion = new StationaryShape(position, extent);
         ImageStride strideExplosion = new ImageStride(EXPLOSION_LENGTH_MS / 8, explosionStrides);
@@ -193,9 +201,10 @@ public class Game : DIKUGame, IGameEventProcessor {
                 eventBus.Unsubscribe(GameEventType.MovementEvent, squadron);
             }
             squadron = squadCreator.CreateSquad(enemyStridesBlue, enemyStridesGreen);   
-            enemySpeed += new Vec2F(0f,-0.00025f);
+            enemySpeed += new Vec2F(0f, -0.00025f);
             squadron.ChangeSpeed(enemySpeed);
             eventBus.Subscribe(GameEventType.MovementEvent, squadron);
+            roundCounter.IncrementRound();
         }
     }
 }

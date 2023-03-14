@@ -15,8 +15,5 @@ public interface ISquadron: IGameEventProcessor {
 
     void ChangeStrategy(IMovementStrategy newStrategy);
     void ChangeSpeed(Vec2F speed);
-    virtual void MoveSquad() {
-        Strategy.MoveEnemies(Enemies);
-    }
     }
 }

@@ -13,7 +13,7 @@ public class Enemy : Entity {
         : base(shape, image) {
             hitPoints = 5;
             this.alternativeImage = alternativeImage as ImageStride;
-            Shape.AsDynamicShape().Direction = new Vec2F(0f,-0.001f);
+            Shape.AsDynamicShape().Direction = new Vec2F(0f, -0.001f);
             startPos = new Vec2F(Shape.Position.X, Shape.Position.Y);
             isEnraged = false;
         }
@@ -29,7 +29,7 @@ public class Enemy : Entity {
     }
     private void Enrage() {
         Image = alternativeImage;
-        Shape.AsDynamicShape().Direction *= new Vec2F(0f,1.5f);
+        Shape.AsDynamicShape().Direction *= new Vec2F(0f, 1.5f);
         isEnraged = true;
     }
 }

@@ -26,7 +26,7 @@ static public class GameEventCreator {
     }
     static public GameEvent CreateGameStateEvent(string message) {
         GameEvent retVal = new GameEvent();
-        retVal.EventType = GameEventType.WindowEvent;
+        retVal.EventType = GameEventType.GameStateEvent;
         retVal.Message = message;
         return retVal;
     }

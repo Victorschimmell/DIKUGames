@@ -31,7 +31,8 @@ public class Squadron4 : ISquadron
         for (int j = 0; j < 2; j++) {
             for (int i = 0; i < maxEnemies/2; i++) {
                 enemies.AddEntity(new Enemy(
-                    new DynamicShape(new Vec2F(0.1f + (float)i * 0.2f, 1f + 0.1f * j), new Vec2F(0.1f, 0.1f)),
+                    new DynamicShape(new Vec2F(0.1f + (float)i * 0.2f, 1f + 0.1f * j), 
+                        new Vec2F(0.1f, 0.1f)),
                     new ImageStride(80, enemyStride),
                     new ImageStride(80, alternativeEnemyStride)));
             }
