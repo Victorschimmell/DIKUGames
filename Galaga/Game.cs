@@ -68,45 +68,34 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public override void Update() {
         UpdateSquadron();
-        eventBus.RegisterEvent(GameEventCreator.CreateGameEvent(GameEventType.MovementEvent, "MoveAll"));
+        eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveAll"));
         IterateShots();
         UpdateHealth();
-        //player.Move();
-        //squadron.MoveSquad();
         window.PollEvents();
         eventBus.ProcessEventsSequentially();
     }
     private void KeyPress(KeyboardKey key) {
         switch (key) {
             case KeyboardKey.Left:
-                GameEvent MoveLeft = new GameEvent();
-                MoveLeft.EventType = GameEventType.MovementEvent;
-                MoveLeft.Message = "MoveLeft";
-                eventBus.RegisterEvent(MoveLeft);
+                eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveLeft"));
                 break;
             case KeyboardKey.Right:
-                GameEvent MoveRight = new GameEvent();
-                MoveRight.EventType = GameEventType.MovementEvent;
-                MoveRight.Message = "MoveRight";
-                eventBus.RegisterEvent(MoveRight);
+                eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveRight"));
                 break;
             case KeyboardKey.Space:
                 Vec2F pShot = player.GetPosition();
                 float sumExtent = player.GetExtent().X - PlayerShot.GetExtent().X;
-                playerShots.AddEntity(new PlayerShot(new Vec2F(pShot.X + sumExtent / 2, pShot.Y), playerShotImage));
+                PlayerShot newPS = new PlayerShot(new Vec2F(pShot.X + sumExtent / 2, pShot.Y), playerShotImage);
+                eventBus.Subscribe(GameEventType.MovementEvent, newPS);
+                playerShots.AddEntity(newPS);
                 break;
             case KeyboardKey.Escape:
-                GameEvent windowClose = new GameEvent();
-                windowClose.EventType = GameEventType.WindowEvent;
-                windowClose.Message = "Close the window";
-                eventBus.RegisterEvent(windowClose);
+                eventBus.RegisterEvent(GameEventCreator.CreateWindowEvent("CloseWindow"));
                 break;
         }
     }
     private void KeyRelease(KeyboardKey key) {
-        GameEvent MoveStop = new GameEvent();
-        MoveStop.EventType = GameEventType.MovementEvent;
-        MoveStop.Message = "MoveStop";
+        GameEvent MoveStop = GameEventCreator.CreateWindowEvent("MoveStop");
         switch (key) {
             case KeyboardKey.Left:
                 eventBus.RegisterEvent(MoveStop);
@@ -134,7 +123,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     {
         if (gameEvent.EventType == GameEventType.WindowEvent) {
             switch (gameEvent.Message) {
-            case "Close the window":
+            case "CloseWindow":
                 window.CloseWindow();
                 break;
             default:
@@ -153,15 +142,15 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
         }}
     }
-
     private void IterateShots() {
         playerShots.Iterate(shot => {
-            shot.Shape.Move();
             if (shot.Shape.Position.Y > 1) {
+                eventBus.Unsubscribe(GameEventType.MovementEvent, shot);
                 shot.DeleteEntity();
             } else {
             squadron.Enemies.Iterate(enemy => {
             if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision) {
+                eventBus.Unsubscribe(GameEventType.MovementEvent, shot);
                 shot.DeleteEntity();
                 enemy.TakeDamage();
                 if (enemy.IsDeleted()) {
@@ -172,6 +161,7 @@ public class Game : DIKUGame, IGameEventProcessor {
             }
         });
     }
+
     
     private void AddExplosion(Vec2F position, Vec2F extent) {
         StationaryShape explosion = new StationaryShape(position, extent);
