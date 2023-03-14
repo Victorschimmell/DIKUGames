@@ -172,7 +172,9 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void UpdateHealth() {
         squadron.Enemies.Iterate(enemy => {
             if (enemy.Shape.Position.Y < 0) {
-                health.LoseHealth(eventBus);
+                if (health.LoseHealth()) {
+                    eventBus.RegisterEvent(GameEventCreator.CreateGameStateEvent("Game Over"));
+                }
                 enemy.DeleteEntity();
             }
         });
