@@ -9,12 +9,14 @@ using DIKUArcade.Input;
 using System.Collections.Generic;
 using DIKUArcade.Physics;
 using Galaga.Squadron;
+using Galaga.MovementStrategy;
 
 namespace Galaga;
 public class Game : DIKUGame, IGameEventProcessor {
     private EntityContainer<PlayerShot> playerShots;
     private IBaseImage playerShotImage;
-    private EntityContainer<Enemy> enemies;
+    //private EntityContainer<Enemy> enemies;
+    private ISquadron squadron;
     private GameEventBus eventBus;
     private Player player;
     private AnimationContainer enemyExplosions;
@@ -22,6 +24,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private const int EXPLOSION_LENGTH_MS = 500;
     private List<Image> enemyStridesGreen;
     private List<Image> enemyStridesBlue;
+    private Health health;
     public Game(WindowArgs windowArgs) : base(windowArgs) {
         // Player
         player = new Player(
@@ -40,25 +43,29 @@ public class Game : DIKUGame, IGameEventProcessor {
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
         enemyStridesGreen = ImageStride.CreateStrides(2, Path.Combine("Assets",
             "Images", "GreenMonster.png"));
-        ISquadron squad =  new Squadron3(enemyStridesBlue, enemyStridesGreen);
-        enemies = squad.Enemies;
         // PlayerShot
         playerShots = new EntityContainer<PlayerShot>();
         playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
         // Explosions
-        enemyExplosions = new AnimationContainer(squad.MaxEnemies);
         explosionStrides = ImageStride.CreateStrides(8, 
             Path.Combine("Assets", "Images", "Explosion.png"));
+
+        //health
+        health = new Health(new Vec2F(0.05f, -0.6f), new Vec2F(0.7f, 0.7f));
     }
     public override void Render() {
         player.Render();
-        enemies.RenderEntities();
+        squadron.Enemies.RenderEntities();
         playerShots.RenderEntities();
         enemyExplosions.RenderAnimations();
+        health.RenderHealth();
     }
     public override void Update() {
-        player.Move();
+        UpdateSquadron();
         IterateShots();
+        UpdateHealth();
+        player.Move();
+        squadron.Strategy.MoveEnemies(squadron.Enemies);
         window.PollEvents();
         eventBus.ProcessEventsSequentially();
     }
@@ -133,15 +140,15 @@ public class Game : DIKUGame, IGameEventProcessor {
             if (shot.Shape.Position.Y > 1) {
                 shot.DeleteEntity();
             } else {
-            enemies.Iterate(enemy => {
-                if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision) {
-                    shot.DeleteEntity();
-                    enemy.TakeDamage();
-                    if (enemy.IsDeleted()) {
-                        AddExplosion(enemy.Shape.Position, enemy.Shape.Extent);
-                    }
+            squadron.Enemies.Iterate(enemy => {
+            if (CollisionDetection.Aabb(shot.Shape.AsDynamicShape(), enemy.Shape).Collision) {
+                shot.DeleteEntity();
+                enemy.TakeDamage();
+                if (enemy.IsDeleted()) {
+                    AddExplosion(enemy.Shape.Position, enemy.Shape.Extent);
                 }
-                });
+            }
+            });
             }
         });
     }
@@ -150,5 +157,49 @@ public class Game : DIKUGame, IGameEventProcessor {
         StationaryShape explosion = new StationaryShape(position, extent);
         ImageStride strideExplosion = new ImageStride(EXPLOSION_LENGTH_MS / 8, explosionStrides);
         enemyExplosions.AddAnimation(explosion, EXPLOSION_LENGTH_MS, strideExplosion);
+    }
+
+    private void UpdateHealth() {
+        squadron.Enemies.Iterate(enemy => {
+            if (enemy.Shape.Position.Y < 0) {
+                health.LoseHealth();
+                enemy.DeleteEntity();
+            }
+        });
+    }
+
+    private void UpdateSquadron() {
+        bool doUpdate = false;
+        if (squadron == null) {
+            doUpdate = true;
+        }
+        else if (squadron.Enemies.CountEntities() == 0) {
+            doUpdate = true;
+        }
+        if (doUpdate) {
+            System.Random random = new System.Random();
+            int rand = random.Next(3);
+            switch (rand) {
+                case 0:
+                squadron = new Squadron1(enemyStridesBlue, enemyStridesGreen);
+                break;
+                case 1:
+                squadron = new Squadron2(enemyStridesBlue, enemyStridesGreen);
+                break;
+                case 2:
+                squadron = new Squadron3(enemyStridesBlue, enemyStridesGreen);
+                break;
+            }
+            rand = random.Next(2);
+            switch (rand) {
+                case 0:
+                squadron.ChangeStrategy(new DownMove());
+                break;
+                case 1:
+                squadron.ChangeStrategy(new ZigZag());
+                break;
+            }
+            enemyExplosions = new AnimationContainer(squadron.MaxEnemies);
+        }
     }
 }
