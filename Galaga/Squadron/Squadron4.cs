@@ -20,7 +20,7 @@ public class Squadron4 : ISquadron
     public IMovementStrategy Strategy => strategy;
 
     public Squadron4(List<Image> enemyStride, List<Image> alternativeEnemyStride) {
-        maxEnemies = 16;
+        maxEnemies = 8;
         this.alternativeEnemyStride = alternativeEnemyStride;
         enemies = new EntityContainer<Enemy>(maxEnemies);
         CreateEnemies(enemyStride, alternativeEnemyStride);
@@ -28,15 +28,13 @@ public class Squadron4 : ISquadron
     }
 
     public void CreateEnemies(List<Image> enemyStride, List<Image> alternativeEnemyStride) {
-        for (int i = 0; i < maxEnemies/2; i++) {
-            enemies.AddEntity(new Enemy(
-                new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 1f), new Vec2F(0.1f, 0.1f)),
-                new ImageStride(80, enemyStride),
-                new ImageStride(80, alternativeEnemyStride)));
-            enemies.AddEntity(new Enemy(
-                new DynamicShape(new Vec2F(0.1f + (float)i * 0.1f, 1.1f), new Vec2F(0.1f, 0.1f)),
-                new ImageStride(80, enemyStride),
-                new ImageStride(80, alternativeEnemyStride)));
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < maxEnemies/2; i++) {
+                enemies.AddEntity(new Enemy(
+                    new DynamicShape(new Vec2F(0.1f + (float)i * 0.2f, 1f + 0.1f * j), new Vec2F(0.1f, 0.1f)),
+                    new ImageStride(80, enemyStride),
+                    new ImageStride(80, alternativeEnemyStride)));
+            }
         }
     }
 

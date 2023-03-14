@@ -95,7 +95,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         }
     }
     private void KeyRelease(KeyboardKey key) {
-        GameEvent MoveStop = GameEventCreator.CreateWindowEvent("MoveStop");
+        GameEvent MoveStop = GameEventCreator.CreateMovementEvent("MoveStop");
         switch (key) {
             case KeyboardKey.Left:
                 eventBus.RegisterEvent(MoveStop);
