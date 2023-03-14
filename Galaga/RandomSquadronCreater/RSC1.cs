@@ -8,7 +8,7 @@ namespace Galaga.RandomSquadronCreater {
 public class RSC1 : IRandomSquadronCreater {
     public ISquadron CreateSquad(List<Image> enemyStride, List<Image> alternativeEnemyStride) {
         System.Random random = new System.Random();
-            int rand = random.Next(3);
+            int rand = random.Next(4);
             ISquadron squadron = new Squadron1(enemyStride, alternativeEnemyStride);
             switch (rand) {
                 case 0:

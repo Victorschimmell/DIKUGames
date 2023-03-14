@@ -55,7 +55,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         // Explosions
         explosionStrides = ImageStride.CreateStrides(8, 
             Path.Combine("Assets", "Images", "Explosion.png"));
-
+        enemyExplosions = new AnimationContainer(8);
         //health
         health = new Health(new Vec2F(0.05f, -0.6f), new Vec2F(0.7f, 0.7f));
 
@@ -199,7 +199,6 @@ public class Game : DIKUGame, IGameEventProcessor {
         }
         if (doUpdate) {
             squadron = squadCreator.CreateSquad(enemyStridesBlue, enemyStridesGreen);   
-            enemyExplosions = new AnimationContainer(squadron.MaxEnemies);
             enemySpeed += new Vec2F(0f,-0.00025f);
             squadron.ChangeSpeed(enemySpeed);
         }
