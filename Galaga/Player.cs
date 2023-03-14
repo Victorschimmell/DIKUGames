@@ -5,7 +5,6 @@ using DIKUArcade.Events;
 
 namespace Galaga {
     public class Player: Entity, IGameEventProcessor {
-        //private Entity entity;
         private DynamicShape shape;
         private float moveLeft;
         private float moveRight;
@@ -21,7 +20,6 @@ namespace Galaga {
             }
         }
         public void Move() {
-            // TODO: move the shape and guard against the window borders¨
             if (shape.Direction.X + shape.Position.X >= 0f && shape.Direction.X + shape.Position.X <= 1f-shape.Extent.X) {
                 Shape.Move(shape.Direction);
             }
