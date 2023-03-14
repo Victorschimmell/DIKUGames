@@ -3,6 +3,7 @@ using DIKUArcade.Graphics;
 using DIKUArcade.Math;
 using System.Collections.Generic;
 using Galaga.MovementStrategy;
+using DIKUArcade.Events;
 
 namespace Galaga.Squadron {
 public class Squadron1 : ISquadron
@@ -38,6 +39,15 @@ public class Squadron1 : ISquadron
         Enemies.Iterate(enemy => {
             enemy.Shape.AsDynamicShape().Direction = speed;
         });
+    }
+    public void ProcessEvent(GameEvent gameEvent) {
+        if (gameEvent.EventType == GameEventType.MovementEvent) {
+            switch (gameEvent.Message) {
+                case "MoveAll":
+                Strategy.MoveEnemies(Enemies);
+                break;
+            }
+        }
     }
     }
 }

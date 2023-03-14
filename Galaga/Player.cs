@@ -67,6 +67,9 @@ namespace Galaga {
                         SetMoveLeft(false);
                         SetMoveRight(false);
                         break;
+                    case "MoveAll":
+                        shape.Move();
+                        break;
                     default:
                         break;
                 }

@@ -9,7 +9,6 @@ using DIKUArcade.Input;
 using System.Collections.Generic;
 using DIKUArcade.Physics;
 using Galaga.Squadron;
-using Galaga.MovementStrategy;
 using Galaga.RandomSquadronCreater;
 
 namespace Galaga;
@@ -58,7 +57,6 @@ public class Game : DIKUGame, IGameEventProcessor {
         enemyExplosions = new AnimationContainer(8);
         //health
         health = new Health(new Vec2F(0.05f, -0.6f), new Vec2F(0.7f, 0.7f));
-
         squadCreator = new RSC1();
     }
     public override void Render() {
@@ -70,10 +68,11 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public override void Update() {
         UpdateSquadron();
+        eventBus.RegisterEvent(GameEventCreator.CreateGameEvent(GameEventType.MovementEvent, "MoveAll"));
         IterateShots();
         UpdateHealth();
-        player.Move();
-        squadron.Strategy.MoveEnemies(squadron.Enemies);
+        //player.Move();
+        //squadron.MoveSquad();
         window.PollEvents();
         eventBus.ProcessEventsSequentially();
     }
@@ -198,9 +197,13 @@ public class Game : DIKUGame, IGameEventProcessor {
             doUpdate = true;
         }
         if (doUpdate) {
+            if (squadron != null) {
+                eventBus.Unsubscribe(GameEventType.MovementEvent, squadron);
+            }
             squadron = squadCreator.CreateSquad(enemyStridesBlue, enemyStridesGreen);   
             enemySpeed += new Vec2F(0f,-0.00025f);
             squadron.ChangeSpeed(enemySpeed);
+            eventBus.Subscribe(GameEventType.MovementEvent, squadron);
         }
     }
 }
