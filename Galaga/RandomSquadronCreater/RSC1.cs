@@ -24,7 +24,7 @@ public class RSC1 : IRandomSquadronCreater {
                 squadron = new Squadron4(enemyStride, alternativeEnemyStride);
                 break;
             }
-            rand = random.Next(2);
+            rand = random.Next(3);
             switch (rand) {
                 case 0:
                 squadron.ChangeStrategy(new DownMove());
