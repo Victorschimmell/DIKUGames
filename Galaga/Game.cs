@@ -36,11 +36,12 @@ public class Game : DIKUGame, IGameEventProcessor {
         player = new Player(
             new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
             new Image(Path.Combine("Assets", "Images", "Player.png")));
+        // Window
+        window.SetKeyEventHandler(KeyHandler);
         // EventBus
         eventBus = new GameEventBus();
         eventBus.InitializeEventBus(new List<GameEventType> { GameEventType.InputEvent,
             GameEventType.WindowEvent, GameEventType.MovementEvent, GameEventType.GameStateEvent});
-        window.SetKeyEventHandler(KeyHandler);
         eventBus.Subscribe(GameEventType.InputEvent, this);
         eventBus.Subscribe(GameEventType.WindowEvent, this);
         eventBus.Subscribe(GameEventType.GameStateEvent, this);
@@ -65,7 +66,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         gameTexts.AddText(health);
         roundCounter = new RoundCounter(new Vec2F(0.02f, 0.5f), new Vec2F(0.5f, 0.5f));
         gameTexts.AddText(roundCounter);
-        //Squads
+        //SquadCreator
         squadCreator = new RSC1();
     }
     public override void Render() {
@@ -94,7 +95,8 @@ public class Game : DIKUGame, IGameEventProcessor {
             case KeyboardKey.Space:
                 Vec2F pShot = player.GetPosition();
                 float sumExtent = player.GetExtent().X - PlayerShot.GetExtent().X;
-                PlayerShot newPS = new PlayerShot(new Vec2F(pShot.X + sumExtent / 2, pShot.Y), playerShotImage);
+                PlayerShot newPS = new PlayerShot(new Vec2F(pShot.X + sumExtent / 2, pShot.Y), 
+                    playerShotImage);
                 eventBus.Subscribe(GameEventType.MovementEvent, newPS);
                 playerShots.AddEntity(newPS);
                 break;
@@ -128,8 +130,7 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
         }
     }
-    void IGameEventProcessor.ProcessEvent(GameEvent gameEvent)
-    {
+    void IGameEventProcessor.ProcessEvent(GameEvent gameEvent) {
         if (gameEvent.EventType == GameEventType.WindowEvent) {
             switch (gameEvent.Message) {
             case "CloseWindow":
@@ -142,7 +143,8 @@ public class Game : DIKUGame, IGameEventProcessor {
             switch (gameEvent.Message) {
             case "GameOver":
                 gameTexts.RemoveText(health);
-                gameTexts.AddText(new GameStateText("Game Over", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f)));
+                gameTexts.AddText(new GameStateText("Game Over", 
+                    new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f)));
                 break;
             default:
                 break;
