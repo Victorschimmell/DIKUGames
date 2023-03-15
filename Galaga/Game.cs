@@ -78,8 +78,8 @@ public class Game : DIKUGame, IGameEventProcessor {
     }
     public override void Update() {
         UpdateSquadron();
+        GalagaColltionDetection();
         eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveAll"));
-        IterateShots();
         UpdateHealth();
         window.PollEvents();
         eventBus.ProcessEventsSequentially();
@@ -91,6 +91,12 @@ public class Game : DIKUGame, IGameEventProcessor {
                 break;
             case KeyboardKey.Right:
                 eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveRight"));
+                break;
+            case KeyboardKey.Up:
+                eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveUp"));
+                break;
+            case KeyboardKey.Down:
+                eventBus.RegisterEvent(GameEventCreator.CreateMovementEvent("MoveDown"));
                 break;
             case KeyboardKey.Space:
                 Vec2F pShot = player.GetPosition();
@@ -106,13 +112,20 @@ public class Game : DIKUGame, IGameEventProcessor {
         }
     }
     private void KeyRelease(KeyboardKey key) {
-        GameEvent MoveStop = GameEventCreator.CreateMovementEvent("MoveStop");
+        GameEvent MoveStopLeftRight = GameEventCreator.CreateMovementEvent("MoveStopLeftRight");
+        GameEvent MoveStopUpDown = GameEventCreator.CreateMovementEvent("MoveStopUpDown");
         switch (key) {
             case KeyboardKey.Left:
-                eventBus.RegisterEvent(MoveStop);
+                eventBus.RegisterEvent(MoveStopLeftRight);
                 break;
             case KeyboardKey.Right:
-                eventBus.RegisterEvent(MoveStop);
+                eventBus.RegisterEvent(MoveStopLeftRight);
+                break;
+            case KeyboardKey.Up:
+                eventBus.RegisterEvent(MoveStopUpDown);
+                break;
+            case KeyboardKey.Down:
+                eventBus.RegisterEvent(MoveStopUpDown);
                 break;
             case KeyboardKey.Space:
                 break;
@@ -142,6 +155,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         else if (gameEvent.EventType == GameEventType.GameStateEvent) {
             switch (gameEvent.Message) {
             case "GameOver":
+                eventBus.Unsubscribe(GameEventType.MovementEvent, player);
                 gameTexts.RemoveText(health);
                 gameTexts.AddText(new GameStateText("Game Over", 
                     new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f)));
@@ -169,6 +183,32 @@ public class Game : DIKUGame, IGameEventProcessor {
             }
         });
     }
+    private void PlayerCollideWithEnemy() {
+        squadron.Enemies.Iterate(enemy => {
+            if (CollisionDetection.Aabb(player.GetShape(), enemy.Shape).Collision) {
+                IsGameOver(health.LoseHealth(3));
+                AddExplosion(player.Shape.Position, player.Shape.Extent);
+            }
+            });
+    }
+    private void EnemyCollideWithPlayer() {
+        squadron.Enemies.Iterate(enemy => {
+            if (CollisionDetection.Aabb(enemy.Shape.AsDynamicShape(), player.Shape).Collision) {
+                IsGameOver(health.LoseHealth(3));
+                AddExplosion(player.Shape.Position, player.Shape.Extent);
+            }
+            });
+    }
+    private void GalagaColltionDetection() {
+        IterateShots();
+        PlayerCollideWithEnemy();
+        EnemyCollideWithPlayer();
+    }
+    private void IsGameOver(int health) {
+        if (health <= 0) {
+            eventBus.RegisterEvent(GameEventCreator.CreateGameStateEvent("GameOver"));
+        }
+    }
     private void AddExplosion(Vec2F position, Vec2F extent) {
         StationaryShape explosion = new StationaryShape(position, extent);
         ImageStride strideExplosion = new ImageStride(EXPLOSION_LENGTH_MS / 8, explosionStrides);
@@ -178,9 +218,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void UpdateHealth() {
         squadron.Enemies.Iterate(enemy => {
             if (enemy.Shape.Position.Y < 0) {
-                if (health.LoseHealth() <= 0) {
-                    eventBus.RegisterEvent(GameEventCreator.CreateGameStateEvent("GameOver"));
-                }
+                IsGameOver(health.LoseHealth(1));
                 enemy.DeleteEntity();
             }
         });

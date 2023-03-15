@@ -27,9 +27,13 @@ public class Enemy : Entity {
             DeleteEntity();
         }
     }
+    public void Die() {
+        hitPoints = 0;
+        DeleteEntity();
+    }
     private void Enrage() {
         Image = alternativeImage;
-        Shape.AsDynamicShape().Direction *= new Vec2F(1f, 1.5f);
+        Shape.AsDynamicShape().Direction *= new Vec2F(1f, 2f);
         isEnraged = true;
     }
 }

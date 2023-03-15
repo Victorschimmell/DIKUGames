@@ -16,8 +16,8 @@ namespace Galaga.GameText {
     /// health after decreasing it. It is then handled in Game because it is not Health's responsibility
     /// to handle what it means, it is Game's responsibility. 
     /// </summary>
-    public int LoseHealth () {
-        health -= 1;
+    public int LoseHealth (int amount) {
+        health -= amount;
         return health;
     }
     public void RenderGameText () {
