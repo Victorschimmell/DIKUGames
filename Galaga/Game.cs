@@ -45,12 +45,13 @@ public class Game : DIKUGame, IGameEventProcessor {
         eventBus.Subscribe(GameEventType.WindowEvent, this);
         eventBus.Subscribe(GameEventType.GameStateEvent, this);
         eventBus.Subscribe(GameEventType.MovementEvent, player);
+        eventBus.Subscribe(GameEventType.GameStateEvent, player);
         // Enemies
         enemyStridesBlue = ImageStride.CreateStrides
             (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
         enemyStridesGreen = ImageStride.CreateStrides(2, Path.Combine("Assets",
             "Images", "GreenMonster.png"));
-        enemySpeed = new Vec2F(0f, -0.001f);
+        enemySpeed = new Vec2F(0f, 0f);
         // PlayerShot
         playerShots = new EntityContainer<PlayerShot>();
         playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
@@ -139,12 +140,7 @@ public class Game : DIKUGame, IGameEventProcessor {
         }}
         else if (gameEvent.EventType == GameEventType.GameStateEvent) {
             switch (gameEvent.Message) {
-            case "Game Over":
-                eventBus.Unsubscribe(GameEventType.MovementEvent, player);
-                player.DeleteEntity();
-                squadron.Enemies.Iterate(enemy => {
-                    enemy.DeleteEntity();
-                });
+            case "GameOver":
                 gameTexts.RemoveText(health);
                 gameTexts.AddText(new GameStateText("Game Over", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f)));
                 break;
@@ -180,8 +176,8 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void UpdateHealth() {
         squadron.Enemies.Iterate(enemy => {
             if (enemy.Shape.Position.Y < 0) {
-                if (health.LoseHealth()) {
-                    eventBus.RegisterEvent(GameEventCreator.CreateGameStateEvent("Game Over"));
+                if (health.LoseHealth() <= 0) {
+                    eventBus.RegisterEvent(GameEventCreator.CreateGameStateEvent("GameOver"));
                 }
                 enemy.DeleteEntity();
             }
@@ -198,11 +194,13 @@ public class Game : DIKUGame, IGameEventProcessor {
         }
         if (doUpdate) {
             if (squadron != null) {
+                eventBus.Unsubscribe(GameEventType.GameStateEvent, squadron);
                 eventBus.Unsubscribe(GameEventType.MovementEvent, squadron);
             }
             squadron = squadCreator.CreateSquad(enemyStridesBlue, enemyStridesGreen);   
             enemySpeed += new Vec2F(0f, -0.00025f);
             squadron.ChangeSpeed(enemySpeed);
+            eventBus.Subscribe(GameEventType.GameStateEvent, squadron);
             eventBus.Subscribe(GameEventType.MovementEvent, squadron);
             roundCounter.IncrementRound();
         }

@@ -13,21 +13,16 @@ static public class GameEventCreator {
         return retVal;
     }
     static public GameEvent CreateMovementEvent(string message) {
-        GameEvent retVal = new GameEvent();
-        retVal.EventType = GameEventType.MovementEvent;
-        retVal.Message = message;
-        return retVal;
+        return CreateGameEvent(GameEventType.MovementEvent, message);
     }
     static public GameEvent CreateWindowEvent(string message) {
-        GameEvent retVal = new GameEvent();
-        retVal.EventType = GameEventType.WindowEvent;
-        retVal.Message = message;
-        return retVal;
+        return CreateGameEvent(GameEventType.WindowEvent, message);
     }
     static public GameEvent CreateGameStateEvent(string message) {
-        GameEvent retVal = new GameEvent();
-        retVal.EventType = GameEventType.GameStateEvent;
-        retVal.Message = message;
-        return retVal;
+        return CreateGameEvent(GameEventType.GameStateEvent, message);
+    }
+
+    static public GameEvent CreateStatusEvent(string message) {
+        return CreateGameEvent(GameEventType.StatusEvent, message);
     }
 }

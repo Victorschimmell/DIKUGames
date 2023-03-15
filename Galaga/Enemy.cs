@@ -29,7 +29,7 @@ public class Enemy : Entity {
     }
     private void Enrage() {
         Image = alternativeImage;
-        Shape.AsDynamicShape().Direction *= new Vec2F(0f, 1.5f);
+        Shape.AsDynamicShape().Direction *= new Vec2F(1f, 1.5f);
         isEnraged = true;
     }
 }

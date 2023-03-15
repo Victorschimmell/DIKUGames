@@ -12,16 +12,13 @@ namespace Galaga.GameText {
         display.SetColor(new Vec3F(1f,1f,1f));
     }
     /// <summary>
-    /// This method reduces the health by 1 and checks whether or not the HP is 0. If the HP is 0 or 
-    /// less then the method returns true indicating that the game is over. The method does not end 
-    /// the game itself, because that is Game's responsibility. 
+    /// This method reduces the health by 1 and checks whether or not the HP is 0. The method returns 
+    /// health after decreasing it. It is then handled in Game because it is not Health's responsibility
+    /// to handle what it means, it is Game's responsibility. 
     /// </summary>
-    public bool LoseHealth () {
+    public int LoseHealth () {
         health -= 1;
-        if (health <= 0) {
-            return true;
-        }
-        return false;
+        return health;
     }
     public void RenderGameText () {
         display.SetText("HP: " + health.ToString());

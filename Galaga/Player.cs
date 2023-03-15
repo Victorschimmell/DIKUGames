@@ -72,6 +72,13 @@ namespace Galaga {
                         break;
                 }
             }
+            else if (gameEvent.EventType == GameEventType.GameStateEvent) {
+                switch (gameEvent.Message) {
+                    case "GameOver": 
+                        DeleteEntity();
+                        break;
+                }
+            }
         }
-    }
 }   
+}
