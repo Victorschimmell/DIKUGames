@@ -8,6 +8,8 @@ namespace Galaga.GalagaStates {
                     return GameStateType.GamePaused;
                 case "MAIN_MENU":
                     return GameStateType.MainMenu;
+                case "GAME_OVER":
+                    return GameStateType.GameOver;
                 default:
                     throw new System.ArgumentException("Invalid state-input!");
             }
@@ -21,6 +23,8 @@ namespace Galaga.GalagaStates {
                     return "GAME_PAUSED";
                 case GameStateType.MainMenu:
                     return "MAIN_MENU";
+                case GameStateType.GameOver:
+                    return "GAME_OVER";
                 default:
                     throw new System.ArgumentException("Invalid type-input!");
             }

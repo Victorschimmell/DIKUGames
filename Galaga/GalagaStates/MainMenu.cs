@@ -42,14 +42,7 @@ namespace Galaga.GalagaStates {
                     break;
                 case KeyboardKey.Enter:
                     switch (activeMenuButton) {
-                        case 1:
-                            GalagaBus.GetBus().RegisterEvent(
-                                new GameEvent{
-                                    EventType = GameEventType.WindowEvent,
-                                    Message = "CloseWindow",
-                                });
-                            break;
-                        default:
+                        case 0:
                             GalagaBus.GetBus().RegisterEvent(
                                 new GameEvent{
                                     EventType = GameEventType.GameStateEvent,
@@ -57,6 +50,13 @@ namespace Galaga.GalagaStates {
                                     StringArg1 = "GAME_RUNNING"
                                 }
                             );
+                            break;
+                        case 1:
+                            GalagaBus.GetBus().RegisterEvent(
+                                new GameEvent{
+                                    EventType = GameEventType.WindowEvent,
+                                    Message = "CloseWindow",
+                                });
                             break;
                     }
                     break;
@@ -76,7 +76,7 @@ namespace Galaga.GalagaStates {
 
         public void UpdateState() {
             menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 1f, 1f));
-            menuButtons[maxMenuButtons - 1 - activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
+            menuButtons[maxMenuButtons - 1 - activeMenuButton].SetColor(new Vec3F(0.2f, 0.2f, 0.2f));
         }
 
         private void InitializeGameState() {
@@ -87,7 +87,6 @@ namespace Galaga.GalagaStates {
             menuButtons[1] = new Text("Quit", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
             activeMenuButton = 0;
             maxMenuButtons = menuButtons.Length;
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 1f, 1f));
         }
     }
 }

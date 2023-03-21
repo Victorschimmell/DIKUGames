@@ -11,7 +11,7 @@ namespace Galaga.GameText {
         maxHealth = 3;
         health = maxHealth;
         display = new Text (health.ToString(), position, extent);
-        display.SetColor(new Vec3F(1f,1f,1f));
+        display.SetColor(new Vec3F(1f, 1f, 1f));
     }
     /// <summary>
     /// This method reduces the health by an amount and checks whether or not the HP is 0. The method  
@@ -20,7 +20,8 @@ namespace Galaga.GameText {
     /// The hp is not reduced if the amount to lose is negative and the hp can't be reduced to less
     /// than 0.
     /// If the player collides with the enemy, the player will lose all its hp and lose the game.
-    /// When an enemy collides with the bottom of the screen, the player will lose 1 hp.
+    /// When an enemy collides with the bottom of the screen, the player will lose 1 hp. But this
+    /// part is not handled here. It is handled in GameRunning.
     /// </summary>
     public int LoseHealth (int amount) {
         if (amount > 0) {

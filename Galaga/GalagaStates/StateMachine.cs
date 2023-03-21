@@ -21,6 +21,12 @@ namespace Galaga.GalagaStates {
                     break;
                 case GameStateType.MainMenu:
                     ActiveState = MainMenu.GetInstance();
+                    GameRunning.GetInstance().ResetState();
+                    break;
+                case GameStateType.GameOver:
+                    ActiveState = GameOver.GetInstance();
+                    GameOver.GetInstance().SetRounds(GameRunning.GetInstance().RoundCounter);
+                    GameRunning.GetInstance().ResetState();
                     break;
             }
         }

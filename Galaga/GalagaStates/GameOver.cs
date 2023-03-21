@@ -5,6 +5,7 @@ using DIKUArcade.Input;
 using DIKUArcade.Math;
 using DIKUArcade.Events;
 using System.IO;
+using Galaga.GameText;
 
 namespace Galaga.GalagaStates {
     public class GameOver : IGameState {
@@ -14,6 +15,7 @@ namespace Galaga.GalagaStates {
         private Text[] menuButtons;
         private int activeMenuButton;
         private int maxMenuButtons;
+        private RoundCounter roundCounter;
         public static GameOver GetInstance() {
             if (GameOver.instance == null) {
                 GameOver.instance = new GameOver();
@@ -42,15 +44,8 @@ namespace Galaga.GalagaStates {
                     activeMenuButton = (activeMenuButton + 1) % maxMenuButtons;
                     break;
                 case KeyboardKey.Enter:
-                    switch (menuButtons[activeMenuButton].ToString()) {
-                        case "Quit":
-                            GalagaBus.GetBus().RegisterEvent(
-                                new GameEvent{
-                                    EventType = GameEventType.WindowEvent,
-                                    Message = "CloseWindow",
-                                });
-                            break;
-                        default:
+                    switch (activeMenuButton) {
+                        case 0:
                             GalagaBus.GetBus().RegisterEvent(
                                 new GameEvent{
                                     EventType = GameEventType.GameStateEvent,
@@ -58,6 +53,13 @@ namespace Galaga.GalagaStates {
                                     StringArg1 = "GAME_RUNNING"
                                 }
                             );
+                            break;
+                        case 1:
+                            GalagaBus.GetBus().RegisterEvent(
+                                new GameEvent{
+                                    EventType = GameEventType.WindowEvent,
+                                    Message = "CloseWindow",
+                                });
                             break;
                     }
                     break;
@@ -77,7 +79,8 @@ namespace Galaga.GalagaStates {
         }
 
         public void UpdateState() {
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
+            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 1f, 1f));
+            menuButtons[maxMenuButtons - 1 - activeMenuButton].SetColor(new Vec3F(0.2f, 0.2f, 0.2f));
         }
 
         private void InitializeGameState() {
@@ -85,13 +88,15 @@ namespace Galaga.GalagaStates {
                 new Image(Path.Combine("Assets", "Images", "TitleImage.png")));
             menuButtons = new Text[2];
             menuButtons[0] = new Text("Try Again", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
-            menuButtons[1] = new Text("Quit", new Vec2F(0.0f, 0f), new Vec2F(0.8f, 0.8f));
+            menuButtons[1] = new Text("Quit", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
             activeMenuButton = 0;
             maxMenuButtons = menuButtons.Length;
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
-            gameoverText = new Text("Game Over", new Vec2F(0.0f, 0.2f), new Vec2F(0.8f, 0.8f));
+            gameoverText = new Text("Game Over", new Vec2F(0.2f, 0.2f), new Vec2F(0.8f, 0.8f));
             gameoverText.SetFontSize(100);
             gameoverText.SetColor(new Vec3F(1f, 0f, 0f));
+        }
+        public void SetRounds(RoundCounter roundCounter) {
+            this.roundCounter = roundCounter;
         }
     }
 }

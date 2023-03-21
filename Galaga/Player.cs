@@ -102,17 +102,16 @@ namespace Galaga {
                         SetMoveUp(false);
                         SetMoveDown(false);
                         break;
+                    case "MoveStopAll":
+                        SetMoveUp(false);
+                        SetMoveDown(false);
+                        SetMoveLeft(false);
+                        SetMoveRight(false);
+                        break;
                     case "MoveAll":
                         Move();
                         break;
                     default:
-                        break;
-                }
-            }
-            else if (gameEvent.EventType == GameEventType.GameStateEvent) {
-                switch (gameEvent.Message) {
-                    case "GameOver": 
-                        DeleteEntity();
                         break;
                 }
             }

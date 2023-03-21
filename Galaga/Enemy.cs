@@ -11,7 +11,7 @@ public class Enemy : Entity {
     private bool isEnraged;
     public Enemy(DynamicShape shape, IBaseImage image, IBaseImage alternativeImage)
         : base(shape, image) {
-            hitPoints = 5;
+            hitPoints = 3;
             this.alternativeImage = alternativeImage as ImageStride;
             Shape.AsDynamicShape().Direction = new Vec2F(0f, -0.001f);
             startPos = new Vec2F(Shape.Position.X, Shape.Position.Y);

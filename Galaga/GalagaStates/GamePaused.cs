@@ -36,21 +36,23 @@ namespace Galaga.GalagaStates {
         public void KeyPress(KeyboardKey key) {
             switch (key) {
                 case KeyboardKey.Up:
-                    activeMenuButton = (activeMenuButton - 1) % maxMenuButtons;
+                    activeMenuButton = (System.Math.Max(activeMenuButton - 1, 0));
                     break;
                 case KeyboardKey.Down:
-                    activeMenuButton = (activeMenuButton + 1) % maxMenuButtons;
+                    activeMenuButton = (System.Math.Min(activeMenuButton + 1, maxMenuButtons - 1));
                     break;
                 case KeyboardKey.Enter:
-                    switch (menuButtons[activeMenuButton].ToString()) {
-                        case "Quit":
+                    switch (activeMenuButton) {
+                        case 1:
                             GalagaBus.GetBus().RegisterEvent(
                                 new GameEvent{
-                                    EventType = GameEventType.WindowEvent,
-                                    Message = "CloseWindow",
-                                });
+                                    EventType = GameEventType.GameStateEvent,
+                                    Message = "CHANGE_STATE",
+                                    StringArg1 = "MAIN_MENU"
+                                }
+                            );
                             break;
-                        default:
+                        case 0:
                             GalagaBus.GetBus().RegisterEvent(
                                 new GameEvent{
                                     EventType = GameEventType.GameStateEvent,
@@ -69,7 +71,6 @@ namespace Galaga.GalagaStates {
             foreach (Text button in menuButtons) {
                 button.RenderText();
             }
-            pausedText.RenderText();
         }
 
         public void ResetState() {
@@ -77,21 +78,18 @@ namespace Galaga.GalagaStates {
         }
 
         public void UpdateState() {
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
+            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 1f, 1f));
+            menuButtons[maxMenuButtons - 1 - activeMenuButton].SetColor(new Vec3F(0.2f, 0.2f, 0.2f));
         }
 
         private void InitializeGameState() {
             backGroundImage = new Entity(new DynamicShape(new Vec2F(0f, 0f), new Vec2F(1f, 1f)),
                 new Image(Path.Combine("Assets", "Images", "TitleImage.png")));
             menuButtons = new Text[2];
-            menuButtons[0] = new Text("Resume", new Vec2F(0.2f, 0f), new Vec2F(0.5f, 0.5f));
-            menuButtons[1] = new Text("Quit", new Vec2F(0.0f, 0f), new Vec2F(0.5f, 0.5f));
-            pausedText = new Text("Game Paused", new Vec2F(0.5f, 0.8f), new Vec2F(0.5f, 0.5f));
+            menuButtons[1] = new Text("Main menu", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
+            menuButtons[0] = new Text("Continue", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
             activeMenuButton = 0;
             maxMenuButtons = menuButtons.Length;
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
-            pausedText.SetFontSize(100);
-            pausedText.SetColor(new Vec3F(1f, 0f, 0f));
         }
     }
 }

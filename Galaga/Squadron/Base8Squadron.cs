@@ -46,15 +46,6 @@ public class Base8Squadron : ISquadron
                 break;
             }
         }
-        else if (gameEvent.EventType == GameEventType.GameStateEvent) {
-                switch (gameEvent.Message) {
-                    case "GameOver": 
-                        Enemies.Iterate(enemy => {
-                            enemy.DeleteEntity();
-                        });
-                        break;
-                }
-            }
     }
     }
 }

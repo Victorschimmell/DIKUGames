@@ -12,8 +12,6 @@ using Galaga.GameText;
 using Galaga.Squadron;
 using System.IO;
 
-
-
 namespace Galaga.GalagaStates {
     public class GameRunning : IGameState {
         private static GameRunning instance = null;
@@ -27,32 +25,43 @@ namespace Galaga.GalagaStates {
         private List<Image> enemyStridesGreen;
         private List<Image> enemyStridesBlue;
         private Vec2F enemySpeed;
-        private WindowArgs windowArgs;
         private IRandomSquadronCreater squadCreator;
         private RoundCounter roundCounter;
+        public RoundCounter RoundCounter {get;}
         private Health health;
         public static GameRunning GetInstance() {
             if (GameRunning.instance == null) {
                 GameRunning.instance = new GameRunning();
                 GameRunning.instance.InitializeGameState();
             }
-            GameRunning.instance.ResetState();
             return GameRunning.instance;
         }
 
         private void KeyPress(KeyboardKey key) {
             switch (key) {
                 case KeyboardKey.Left:
-                    GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateMovementEvent("MoveLeft"));
+                    GalagaBus.GetBus().RegisterEvent(new GameEvent{
+                                    EventType = GameEventType.MovementEvent,
+                                    Message = "MoveLeft"
+                                });
                     break;
                 case KeyboardKey.Right:
-                    GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateMovementEvent("MoveRight"));
+                    GalagaBus.GetBus().RegisterEvent(new GameEvent{
+                                    EventType = GameEventType.MovementEvent,
+                                    Message = "MoveRight"
+                                });
                     break;
                 case KeyboardKey.Up:
-                    GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateMovementEvent("MoveUp"));
+                    GalagaBus.GetBus().RegisterEvent(new GameEvent{
+                                    EventType = GameEventType.MovementEvent,
+                                    Message = "MoveUp"
+                                });
                     break;
                 case KeyboardKey.Down:
-                    GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateMovementEvent("MoveDown"));
+                    GalagaBus.GetBus().RegisterEvent(new GameEvent{
+                                    EventType = GameEventType.MovementEvent,
+                                    Message = "MoveDown"
+                                });
                     break;
                 case KeyboardKey.Space:
                     Vec2F pShot = player.GetPosition();
@@ -63,13 +72,23 @@ namespace Galaga.GalagaStates {
                     playerShots.AddEntity(newPS);
                     break;
                 case KeyboardKey.Escape:
-                    GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateWindowEvent("CloseWindow"));
+                    GalagaBus.GetBus().RegisterEvent(
+                                new GameEvent{
+                                    EventType = GameEventType.GameStateEvent,
+                                    Message = "CHANGE_STATE",
+                                    StringArg1 = "GAME_PAUSED"
+                                }
+                            );
                     break;
             }
         }
         private void KeyRelease(KeyboardKey key) {
-            GameEvent MoveStopLeftRight = GameEventCreator.CreateMovementEvent("MoveStopLeftRight");
-            GameEvent MoveStopUpDown = GameEventCreator.CreateMovementEvent("MoveStopUpDown");
+            GameEvent MoveStopLeftRight = new GameEvent{
+                EventType = GameEventType.MovementEvent,
+                Message = "MoveStopLeftRight"};
+            GameEvent MoveStopUpDown = new GameEvent{
+                EventType = GameEventType.MovementEvent,
+                Message = "MoveStopUpDown"};
             switch (key) {
                 case KeyboardKey.Left:
                     GalagaBus.GetBus().RegisterEvent(MoveStopLeftRight);
@@ -110,12 +129,37 @@ namespace Galaga.GalagaStates {
         }
 
         public void ResetState() {
+            player.Shape.SetPosition(new Vec2F(0.45f, 0.1f));
+            GalagaBus.GetBus().RegisterEvent(
+                new GameEvent{
+                    EventType = GameEventType.MovementEvent,
+                    Message = "MoveStopAll"
+                });
+            enemySpeed = new Vec2F(0f, 0f);
+            playerShots = new EntityContainer<PlayerShot>();
+            health = new Health(new Vec2F(0.02f, -0.4f), new Vec2F(0.5f, 0.5f));
+            roundCounter = new RoundCounter(new Vec2F(0.02f, 0.5f), new Vec2F(0.5f, 0.5f));
+            squadron = null;
+            UpdateSquadron();
+        }
+
+        public void UpdateState() {
+            UpdateSquadron();
+            GalagaColltionDetection();
+            GalagaBus.GetBus().RegisterEvent(new GameEvent {
+                EventType = GameEventType.MovementEvent,
+                Message = "MoveAll"
+            });
+            UpdateHealth();
+        }
+
+        private void InitializeGameState() {
+            // Player
             player = new Player(
                 new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
                 new Image(Path.Combine("Assets", "Images", "Player.png")));
             // EventBus
             GalagaBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
-            GalagaBus.GetBus().Subscribe(GameEventType.GameStateEvent, player);
             // Enemies
             enemyStridesBlue = ImageStride.CreateStrides
                 (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
@@ -134,16 +178,7 @@ namespace Galaga.GalagaStates {
             roundCounter = new RoundCounter(new Vec2F(0.02f, 0.5f), new Vec2F(0.5f, 0.5f));
             //SquadCreator
             squadCreator = new RSC1();
-        }
-
-        public void UpdateState() {
             UpdateSquadron();
-            GalagaColltionDetection();
-            GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateMovementEvent("MoveAll"));
-            UpdateHealth();
-        }
-
-        private void InitializeGameState() {
         }
 
         private void IterateShots() {
@@ -188,7 +223,13 @@ namespace Galaga.GalagaStates {
         }
         private void IsGameOver(int amount) {
             if (health.LoseHealth(amount) <= 0) {
-                GalagaBus.GetBus().RegisterEvent(GameEventCreator.CreateGameStateEvent("GameOver"));
+                GalagaBus.GetBus().RegisterEvent(
+                    new GameEvent{
+                        EventType = GameEventType.GameStateEvent,
+                        Message = "CHANGE_STATE",
+                        StringArg1 = "GAME_OVER"
+                    }
+                );
             }
         }
         private void AddExplosion(Vec2F position, Vec2F extent) {
@@ -216,13 +257,11 @@ namespace Galaga.GalagaStates {
             }
             if (doUpdate) {
                 if (squadron != null) {
-                    GalagaBus.GetBus().Unsubscribe(GameEventType.GameStateEvent, squadron);
                     GalagaBus.GetBus().Unsubscribe(GameEventType.MovementEvent, squadron);
                 }
                 squadron = squadCreator.CreateSquad(enemyStridesBlue, enemyStridesGreen);   
                 enemySpeed += new Vec2F(0f, -0.00025f);
                 squadron.ChangeSpeed(enemySpeed);
-                GalagaBus.GetBus().Subscribe(GameEventType.GameStateEvent, squadron);
                 GalagaBus.GetBus().Subscribe(GameEventType.MovementEvent, squadron);
                 roundCounter.IncrementRound();
             }
