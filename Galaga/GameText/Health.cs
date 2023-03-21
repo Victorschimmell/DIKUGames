@@ -19,6 +19,8 @@ namespace Galaga.GameText {
     /// responsibility to handle what it means, it is Game's responsibility. 
     /// The hp is not reduced if the amount to lose is negative and the hp can't be reduced to less
     /// than 0.
+    /// If the player collides with the enemy, the player will lose all its hp and lose the game.
+    /// When an enemy collides with the bottom of the screen, the player will lose 1 hp.
     /// </summary>
     public int LoseHealth (int amount) {
         if (amount > 0) {

@@ -7,19 +7,20 @@ using DIKUArcade.Events;
 using System.IO;
 
 namespace Galaga.GalagaStates {
-    public class MainMenu : IGameState {
-        private static MainMenu instance = null;
+    public class GamePaused : IGameState {
+        private static GamePaused instance = null;
         private Entity backGroundImage;
+        private Text pausedText;
         private Text[] menuButtons;
         private int activeMenuButton;
         private int maxMenuButtons;
-        public static MainMenu GetInstance() {
-            if (MainMenu.instance == null) {
-                MainMenu.instance = new MainMenu();
-                MainMenu.instance.InitializeGameState();
+        public static GamePaused GetInstance() {
+            if (GamePaused.instance == null) {
+                GamePaused.instance = new GamePaused();
+                GamePaused.instance.InitializeGameState();
             }
-            MainMenu.instance.ResetState();
-            return MainMenu.instance;
+            GamePaused.instance.ResetState();
+            return GamePaused.instance;
         }
 
         public void HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
@@ -35,14 +36,14 @@ namespace Galaga.GalagaStates {
         public void KeyPress(KeyboardKey key) {
             switch (key) {
                 case KeyboardKey.Up:
-                    activeMenuButton = (System.Math.Max(activeMenuButton - 1, 0));
+                    activeMenuButton = (activeMenuButton - 1) % maxMenuButtons;
                     break;
                 case KeyboardKey.Down:
-                    activeMenuButton = (System.Math.Min(activeMenuButton + 1, maxMenuButtons - 1));
+                    activeMenuButton = (activeMenuButton + 1) % maxMenuButtons;
                     break;
                 case KeyboardKey.Enter:
-                    switch (activeMenuButton) {
-                        case 1:
+                    switch (menuButtons[activeMenuButton].ToString()) {
+                        case "Quit":
                             GalagaBus.GetBus().RegisterEvent(
                                 new GameEvent{
                                     EventType = GameEventType.WindowEvent,
@@ -68,6 +69,7 @@ namespace Galaga.GalagaStates {
             foreach (Text button in menuButtons) {
                 button.RenderText();
             }
+            pausedText.RenderText();
         }
 
         public void ResetState() {
@@ -75,19 +77,21 @@ namespace Galaga.GalagaStates {
         }
 
         public void UpdateState() {
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 1f, 1f));
-            menuButtons[maxMenuButtons - 1 - activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
+            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
         }
 
         private void InitializeGameState() {
             backGroundImage = new Entity(new DynamicShape(new Vec2F(0f, 0f), new Vec2F(1f, 1f)),
                 new Image(Path.Combine("Assets", "Images", "TitleImage.png")));
             menuButtons = new Text[2];
-            menuButtons[0] = new Text("New Game", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
-            menuButtons[1] = new Text("Quit", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
+            menuButtons[0] = new Text("Resume", new Vec2F(0.2f, 0f), new Vec2F(0.5f, 0.5f));
+            menuButtons[1] = new Text("Quit", new Vec2F(0.0f, 0f), new Vec2F(0.5f, 0.5f));
+            pausedText = new Text("Game Paused", new Vec2F(0.5f, 0.8f), new Vec2F(0.5f, 0.5f));
             activeMenuButton = 0;
             maxMenuButtons = menuButtons.Length;
-            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 1f, 1f));
+            menuButtons[activeMenuButton].SetColor(new Vec3F(1f, 0f, 0f));
+            pausedText.SetFontSize(100);
+            pausedText.SetColor(new Vec3F(1f, 0f, 0f));
         }
     }
 }
