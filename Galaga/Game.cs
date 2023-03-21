@@ -186,7 +186,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void PlayerCollideWithEnemy() {
         squadron.Enemies.Iterate(enemy => {
             if (CollisionDetection.Aabb(player.GetShape(), enemy.Shape).Collision) {
-                IsGameOver(health.LoseHealth(3));
+                IsGameOver(3);
                 AddExplosion(player.Shape.Position, player.Shape.Extent);
             }
             });
@@ -194,7 +194,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void EnemyCollideWithPlayer() {
         squadron.Enemies.Iterate(enemy => {
             if (CollisionDetection.Aabb(enemy.Shape.AsDynamicShape(), player.Shape).Collision) {
-                IsGameOver(health.LoseHealth(3));
+                IsGameOver(3);
                 AddExplosion(player.Shape.Position, player.Shape.Extent);
             }
             });
@@ -204,8 +204,8 @@ public class Game : DIKUGame, IGameEventProcessor {
         PlayerCollideWithEnemy();
         EnemyCollideWithPlayer();
     }
-    private void IsGameOver(int health) {
-        if (health <= 0) {
+    private void IsGameOver(int amount) {
+        if (health.LoseHealth(amount) <= 0) {
             eventBus.RegisterEvent(GameEventCreator.CreateGameStateEvent("GameOver"));
         }
     }
@@ -218,7 +218,7 @@ public class Game : DIKUGame, IGameEventProcessor {
     private void UpdateHealth() {
         squadron.Enemies.Iterate(enemy => {
             if (enemy.Shape.Position.Y < 0) {
-                IsGameOver(health.LoseHealth(1));
+                IsGameOver(1);
                 enemy.DeleteEntity();
             }
         });
