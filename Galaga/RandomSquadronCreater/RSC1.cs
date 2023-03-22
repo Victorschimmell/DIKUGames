@@ -30,7 +30,7 @@ public class RSC1 : IRandomSquadronCreater {
                 squadron.ChangeStrategy(new DownMove());
                 break;
                 case 1:
-                squadron.ChangeStrategy(new ZigZagV2());
+                squadron.ChangeStrategy(new ZigZag());
                 break;
                 case 2:
                 squadron.ChangeStrategy(new RigidZigZag());

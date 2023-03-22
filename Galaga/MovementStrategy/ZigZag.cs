@@ -10,11 +10,10 @@ namespace Galaga.MovementStrategy {
         }
 
         public void MoveEnemy(Enemy enemy) {
-            var direction = enemy.Shape.AsDynamicShape().Direction;
-            enemy.Shape.Position.Y += direction.Y;
-            float sinCalc = (float) Math.Sin((2f * Math.PI * (enemy.StartPos.Y - enemy.Shape.Position.Y))
+            float sinCalc = (float) Math.Sin(1.5+(2f * Math.PI * (enemy.StartPos.Y - enemy.Shape.Position.Y))
                 / 0.045f);
-            enemy.Shape.Position.X = enemy.StartPos.X + 0.05f *  sinCalc;
+            enemy.Shape.AsDynamicShape().Direction.X = 0.01f *  sinCalc;
+            enemy.Shape.Move();
         }
     }
 }
