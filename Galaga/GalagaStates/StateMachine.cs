@@ -24,8 +24,8 @@ namespace Galaga.GalagaStates {
                     GameRunning.GetInstance().ResetState();
                     break;
                 case GameStateType.GameOver:
+                    GameOver.GetInstance().SetRounds(GameRunning.GetInstance().RoundCounter.Clone());
                     ActiveState = GameOver.GetInstance();
-                    GameOver.GetInstance().SetRounds(GameRunning.GetInstance().RoundCounter);
                     GameRunning.GetInstance().ResetState();
                     break;
             }

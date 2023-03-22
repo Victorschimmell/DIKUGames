@@ -27,7 +27,7 @@ namespace Galaga.GalagaStates {
         private Vec2F enemySpeed;
         private IRandomSquadronCreater squadCreator;
         private RoundCounter roundCounter;
-        public RoundCounter RoundCounter {get;}
+        public RoundCounter RoundCounter {get{return roundCounter;}}
         private Health health;
         public static GameRunning GetInstance() {
             if (GameRunning.instance == null) {

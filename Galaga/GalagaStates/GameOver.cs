@@ -38,10 +38,10 @@ namespace Galaga.GalagaStates {
         public void KeyPress(KeyboardKey key) {
             switch (key) {
                 case KeyboardKey.Up:
-                    activeMenuButton = (activeMenuButton - 1) % maxMenuButtons;
+                    activeMenuButton = (System.Math.Max(activeMenuButton - 1, 0));
                     break;
                 case KeyboardKey.Down:
-                    activeMenuButton = (activeMenuButton + 1) % maxMenuButtons;
+                    activeMenuButton = (System.Math.Min(activeMenuButton + 1, maxMenuButtons - 1));
                     break;
                 case KeyboardKey.Enter:
                     switch (activeMenuButton) {
@@ -72,6 +72,10 @@ namespace Galaga.GalagaStates {
                 button.RenderText();
             }
             gameoverText.RenderText();
+            if (roundCounter != null) {
+                roundCounter.RenderGameText();
+            }
+
         }
 
         public void ResetState() {
@@ -87,11 +91,11 @@ namespace Galaga.GalagaStates {
             backGroundImage = new Entity(new DynamicShape(new Vec2F(0f, 0f), new Vec2F(1f, 1f)),
                 new Image(Path.Combine("Assets", "Images", "TitleImage.png")));
             menuButtons = new Text[2];
-            menuButtons[0] = new Text("Try Again", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
-            menuButtons[1] = new Text("Quit", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
+            menuButtons[0] = new Text("Try Again", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
+            menuButtons[1] = new Text("Quit", new Vec2F(0.2f, -0.4f), new Vec2F(0.8f, 0.8f));
             activeMenuButton = 0;
             maxMenuButtons = menuButtons.Length;
-            gameoverText = new Text("Game Over", new Vec2F(0.2f, 0.2f), new Vec2F(0.8f, 0.8f));
+            gameoverText = new Text("Game Over", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
             gameoverText.SetFontSize(100);
             gameoverText.SetColor(new Vec3F(1f, 0f, 0f));
         }
