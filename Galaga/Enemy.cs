@@ -5,10 +5,12 @@ using DIKUArcade.Math;
 namespace Galaga;
 public class Enemy : Entity {
     private int hitPoints;
+    public int HitPoints {get {return hitPoints;}}
     private Vec2F startPos;
     public Vec2F StartPos => startPos;
     private ImageStride alternativeImage;
     private bool isEnraged;
+    public bool IsEnraged {get {return isEnraged;}}
     public Enemy(DynamicShape shape, IBaseImage image, IBaseImage alternativeImage)
         : base(shape, image) {
             hitPoints = 3;

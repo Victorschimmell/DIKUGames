@@ -1,4 +1,3 @@
-/*
 using Galaga;
 using DIKUArcade.Events;
 using DIKUArcade.State;
@@ -26,7 +25,6 @@ namespace GalagaTests {
         testPlayer = new Player(
             new DynamicShape(new Vec2F(0.45f, 0.1f), new Vec2F(0.1f, 0.1f)),
             new Image(Path.Combine("Assets", "Images", "Player.png")));
-        //testPlayer.CreateOpenGLContext();
         DIKUArcade.GUI.Window.CreateOpenGLContext();
         GalagaBus.GetBus().Subscribe(GameEventType.MovementEvent, testPlayer);
     }
@@ -97,4 +95,3 @@ namespace GalagaTests {
     }
 }
 }
-*/

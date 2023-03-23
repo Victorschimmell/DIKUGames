@@ -4,6 +4,7 @@ using DIKUArcade.Math;
 namespace Galaga.GameText {
     public class Health: IGameText {
     private int health;
+    public int CurrentHealth {get {return health;}}
     private int maxHealth;
     private Text display;
     public Text Display => display;
