@@ -1,5 +1,4 @@
 using Galaga;
-using DIKUArcade.Events;
 using DIKUArcade.State;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
@@ -17,48 +16,51 @@ using System.IO;
 namespace GalagaTests {
     [TestFixture]
     public class TestEnemy {
-    
-    public Enemy testEnemy;
+        public List<Image> image1;
+        public List<Image> image2;
+        public Enemy testEnemy;
 
-    [SetUp]
-    public void InitiateEnemy() {
-        testEnemy = new Enemy(
-            new DynamicShape((0.1f, 1f), new Vec2F(0.1f, 0.1f)),
-            new ImageStride(80, enemyStride), new ImageStride(80, alternativeEnemyStride));
-        DIKUArcade.GUI.Window.CreateOpenGLContext();
-        GalagaBus.GetBus().Subscribe(GameEventType.MovementEvent, testEnemy);
-    }
-
-    [Test]
-    public void TestStartPosition() {
-        Assert.AreEqual(testEnemy.GetShape().Position, new Vec2F(0.1f, 0.1f));
-    }
-
-    [Test]
-    public void TestHealth() {
-        Assert.AreEqual(testEnemy.HitPoints, 3);
-    }
-
-    [Test]
-    public void TestTakeDamage() {
-        testEnemy.TakeDamage();
-        Assert.AreEqual(testEnemy.HitPoints, 2);
-    }
-
-    [Test]
-    public void TestEnrage() {
-        Assert.AreNotEqual(testEnemy.IsEnraged, true);
-        testEnemy.TakeDamage();
-        Assert.AreEqual(testEnemy.IsEnraged, true);
-    }
-
-    [Test]
-    public void TestEnemyDie() {
-        Assert.AreNotEqual(testEnemy.IsDeleted(), true);
-        for(int i = 0; i < 3; i++) {
-            testEnemy.TakeDamage();
+        [SetUp]
+        public void InitiateEnemy() {
+            image1 = ImageStride.CreateStrides
+                (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
+            image2 = ImageStride.CreateStrides(2, Path.Combine("Assets",
+                "Images", "GreenMonster.png"));
+            testEnemy = new Enemy(
+                new DynamicShape(new Vec2F(0.1f, 1f), new Vec2F(0.1f, 0.1f)),
+                new ImageStride(80, image1), new ImageStride(80, image2));
         }
-        Assert.AreEqual(testEnemy.IsDeleted(), true);
+
+        [Test]
+        public void TestStartPosition() {
+            Assert.That(testEnemy.Shape.Position.ToString() == (new Vec2F(0.1f, 1f)).ToString());
+        }
+
+        [Test]
+        public void TestHealth() {
+            Assert.That(testEnemy.HitPoints == 3);
+        }
+
+        [Test]
+        public void TestTakeDamage() {
+            testEnemy.TakeDamage();
+            Assert.That(testEnemy.HitPoints == 2);
+        }
+
+        [Test]
+        public void TestEnrage() {
+            Assert.That(testEnemy.IsEnraged == false);
+            testEnemy.TakeDamage();
+            Assert.That(testEnemy.IsEnraged == true);
+        }
+
+        [Test]
+        public void TestEnemyDie() {
+            Assert.That(testEnemy.IsDeleted() == false);
+            for(int i = 0; i < 3; i++) {
+                testEnemy.TakeDamage();
+            }
+            Assert.That(testEnemy.IsDeleted() == true);
+        }
     }
-}
 }

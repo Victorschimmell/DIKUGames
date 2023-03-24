@@ -1,5 +1,4 @@
 using Galaga;
-using DIKUArcade.Events;
 using DIKUArcade.State;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
@@ -12,52 +11,133 @@ using System.Collections.Generic;
 using Galaga.RandomSquadronCreater;
 using Galaga.GameText;
 using Galaga.Squadron;
+using Galaga.MovementStrategy;
 using System.IO;
 
 namespace GalagaTests {
     [TestFixture]
     public class TestMovementStrategy {
     
-    public Squadron squad;
+        public ISquadron squad;
+        public IMovementStrategy strat;
 
-    [SetUp]
-    public void InitiateSquadron() {
-        squad = new Squadron1();
-        DIKUArcade.GUI.Window.CreateOpenGLContext();
-        GalagaBus.GetBus().Subscribe(GameEventType.MovementEvent, squad);
-    }
+        public List<Image> image1;
+        public List<Image> image2;
 
-    [TestCase(new NoMove())]
-    [TestCase(new DownMove())]
-    [TestCase(new ZigZig())]
-    [TestCase(new RigidZigZag())]
-    public void TestNoMoving(IMovementStrategy moveStrat) {
-        squad.ChangeStrategy(moveStrat);
-        int intialYPos = squad.Enemies[0].Shape.Position.Y;
-        squad.Enemies.Iterate(enemy => {
-            Assert.AreEqual(enemy.Shape.Position.Y, intialYPos);
-        });
-    }
+        [SetUp]
+        public void InitiateSquadron() {
+            DIKUArcade.GUI.Window.CreateOpenGLContext();
+            strat = new NoMove();
+            image1 = ImageStride.CreateStrides
+                (4, Path.Combine("Assets", "Images", "BlueMonster.png"));
+            image2 = ImageStride.CreateStrides(2, Path.Combine("Assets",
+                "Images", "GreenMonster.png"));
+            squad = new Squadron1(image1, image2);
+            GalagaBus.GetBus().Subscribe(GameEventType.MovementEvent, squad);
+        }
 
-    [TestCase(new DownMove())]
-    [TestCase(new ZigZig())]
-    [TestCase(new RigidZigZag())]
-    public void TestMoveEnemy(IMovementStrategy moveStrat) {
-        squad.Enemies.Iterate(enemy => {
-            int intialPos = enemy.Shape.Position;
-            moveStrat.MoveEnemy(enemy);
-            Assert.AreNotEqual(enemy.Shape.Position, intialPos);
-        });
+        // Single Enemy
+        [Test]
+        public void TestMoveEnemyNoMove() {
+            strat = new NoMove();
+            squad.Enemies.Iterate(enemy => {
+                Vec2F intialPos = enemy.Shape.Position;
+                strat.MoveEnemy(enemy);
+                Assert.That(enemy.Shape.Position.ToString() == intialPos.ToString());
+            });
+        }
+
+        [Test]
+        public void TestMoveEnemyDownMove() {
+            strat = new DownMove();
+            squad.Enemies.Iterate(enemy => {
+                Vec2F intialPos = enemy.Shape.Position;
+                strat.MoveEnemy(enemy);
+                Assert.That(enemy.Shape.Position.ToString() == (intialPos + new Vec2F(0.0f, -0.001f)).ToString());
+            });
+        }
+
+        [Test]
+        public void TestMoveEnemyZigZag() {
+            strat = new ZigZag();
+            squad.Enemies.Iterate(enemy => {
+                float sinCalc = (float) Math.Sin(1.5+(2f * Math.PI * (enemy.StartPos.Y - enemy.Shape.Position.Y))
+                    / 0.045f);
+                float intialPos = enemy.Shape.Position.X;
+                strat.MoveEnemy(enemy);
+                Assert.That(enemy.Shape.Position.X.ToString() == (intialPos + 0.01f * sinCalc).ToString());
+            });
+        }
+
+        [Test]
+        public void TestMoveEnemyRigidZigZag() {
+            strat = new RigidZigZag();
+            squad.Enemies.Iterate(enemy => {
+                float sinCalc = (float) Math.Sin(0.5+(2f * Math.PI * (enemy.StartPos.Y - enemy.Shape.Position.Y))
+                    / 0.09f);
+                if (sinCalc <= 0) {
+                    sinCalc = -1f;
+                }
+                else {
+                    sinCalc = 1f;
+                }
+                float intialPos = enemy.Shape.Position.X;
+                strat.MoveEnemy(enemy);
+                Assert.That(enemy.Shape.Position.X.ToString() == (intialPos + 0.004f * sinCalc).ToString());
+            });
+        }
+
+        // Multiple Enemies        
+        [Test]
+        public void TestMoveEnemiesNoMove() {
+            strat = new NoMove();
+            float YPos = 1f;
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+            strat.MoveEnemies(squad.Enemies);
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+        }
+
+        [Test]
+        public void TestMoveEnemiesDownMove() {
+            strat = new DownMove();
+            float YPos = 1f;
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+            strat.MoveEnemies(squad.Enemies);
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+        }
+
+        [Test]
+        public void TestMoveEnemiesZigZag() {
+            strat = new ZigZag();
+            float YPos = 1f;
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+            strat.MoveEnemies(squad.Enemies);
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+        }
+
+        [Test]
+        public void TestMoveEnemiesRigidZigZag() {
+            strat = new RigidZigZag();
+            float YPos = 1f;
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+            strat.MoveEnemies(squad.Enemies);
+            squad.Enemies.Iterate(enemy => {
+                Assert.That(enemy.Shape.Position.Y <= YPos);
+            });
+        }
     }
-    [TestCase(new DownMove())]
-    [TestCase(new ZigZig())]
-    [TestCase(new RigidZigZag())]
-    public void TestMoveEnemies(IMovementStrategy moveStrat) {
-        int intialYPos = squad.Enemies[0].Shape.Position.Y;
-        moveStrat.MoveEnemies(squad.Enemies);
-        squad.Enemies.Iterate(enemy => {
-            Assert.AreNotEqual(enemy.Shape.Position.Y, intialYPos);
-        });
-    }
-}
 }

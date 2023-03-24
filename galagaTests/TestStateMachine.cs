@@ -3,9 +3,7 @@ using DIKUArcade.Events;
 using DIKUArcade.State;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
-using DIKUArcade.Input;
 using DIKUArcade.Math;
-using DIKUArcade.Events;
 using DIKUArcade.Physics;
 using DIKUArcade.GUI;
 using System.Collections.Generic;
@@ -15,24 +13,16 @@ using Galaga.Squadron;
 using System.IO;
 using Galaga.GalagaStates;
 using DIKUArcade;
-using DIKUArcade.GUI;
-using DIKUArcade.Events;
-using DIKUArcade.Input;
-using Galaga.GalagaStates;
 
 namespace GalagaTests {
     [TestFixture]
     public class StateMachineTesting {
         private StateMachine stateMachine;
+        
     [SetUp]
     public void InitiateStateMachine() {
+        //System.IO.Directory.SetCurrentDirectory(Galaga.Game.GetProjectPath());
         Window.CreateOpenGLContext();
-        
-        /*Here you should:
-        (1) Initialize a GalagaBus with proper GameEventTypes
-        (2) Instantiate the StateMachine
-        (3) Subscribe the GalagaBus to proper GameEventTypes
-        and GameEventProcessors*/
         stateMachine = new StateMachine();
         GalagaBus.GetBus().Subscribe(GameEventType.GameStateEvent, stateMachine);
     }
@@ -53,6 +43,43 @@ namespace GalagaTests {
         );
         GalagaBus.GetBus().ProcessEventsSequentially();
         Assert.That(stateMachine.ActiveState, Is.InstanceOf<GamePaused>());
+    }
+
+    [Test]
+    public void TestEventGameRunning() {
+        GalagaBus.GetBus().RegisterEvent(
+            new GameEvent{
+                EventType = GameEventType.GameStateEvent,
+                Message = "CHANGE_STATE",
+                StringArg1 = "GAME_RUNNING"
+            }
+        );
+        GalagaBus.GetBus().ProcessEventsSequentially();
+        Assert.That(stateMachine.ActiveState, Is.InstanceOf<GameRunning>());
+    }
+    [Test]
+    public void TestEventGameOver() {
+        GalagaBus.GetBus().RegisterEvent(
+            new GameEvent{
+                EventType = GameEventType.GameStateEvent,
+                Message = "CHANGE_STATE",
+                StringArg1 = "GAME_OVER"
+            }
+        );
+        GalagaBus.GetBus().ProcessEventsSequentially();
+        Assert.That(stateMachine.ActiveState, Is.InstanceOf<GameOver>());
+    }
+    [Test]
+    public void TestEventMainMenu() {
+        GalagaBus.GetBus().RegisterEvent(
+            new GameEvent{
+                EventType = GameEventType.GameStateEvent,
+                Message = "CHANGE_STATE",
+                StringArg1 = "MAIN_MENU"
+            }
+        );
+        GalagaBus.GetBus().ProcessEventsSequentially();
+        Assert.That(stateMachine.ActiveState, Is.InstanceOf<MainMenu>());
     }
     }
 }

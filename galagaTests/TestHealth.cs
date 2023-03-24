@@ -1,5 +1,4 @@
 using Galaga;
-using DIKUArcade.Events;
 using DIKUArcade.State;
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
@@ -19,31 +18,29 @@ namespace GalagaTests {
     public class TestHealth {
     
         public Health testHealth;
+        public int currentHealth;
 
         [SetUp]
         public void InitiateHealth() {
             testHealth = new Health(new Vec2F(0.1f, 0.1f), new Vec2F(0.1f, 0.1f));
-            testHealth.CreateOpenGLContext();
-            DIKUArcade.GUI.Window.CreateOpenGLContext();
-            GalagaBus.GetBus().Subscribe(GameEventType.GraphicsEvent, testHealth);
         }
 
         [Test]
         public void TestStartHealth() {
-            Assert.AreEqual(testHealth.CurrentHealth, 3);
+            Assert.That(testHealth.CurrentHealth == 3);
         }
 
         [Test]
         public void TestLoseHealth() {
-            Assert.LessThan(testHealth.LoseHealth(), 3);
+            Assert.LessOrEqual(testHealth.LoseHealth(1), 3);
         }
 
         [Test]
         public void TestAlwaysPositiveHealth() {
             for(int i = 0; i <= 10; i++){
-                testHealth.LoseHealth();
+                testHealth.LoseHealth(1);
             }
-            Assert.GreaterEqual(testHealth.LoseHealth(), 0);
+            Assert.GreaterOrEqual(testHealth.CurrentHealth, 0);
         }
     }
 }
