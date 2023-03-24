@@ -89,7 +89,7 @@ namespace Galaga.GalagaStates {
             menuButtons = new Text[2];
             menuButtons[1] = new Text("Main menu", new Vec2F(0.2f, -0.2f), new Vec2F(0.8f, 0.8f));
             menuButtons[0] = new Text("Continue", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
-            pausedText = new Text("Game Paused", new Vec2F(0.2f, 0f), new Vec2F(0.8f, 0.8f));
+            pausedText = new Text("Game Paused", new Vec2F(0.2f, 0.2f), new Vec2F(0.8f, 0.8f));
             pausedText.SetColor(new Vec3F(1f, 0f, 0f));
             activeMenuButton = 0;
             maxMenuButtons = menuButtons.Length;
