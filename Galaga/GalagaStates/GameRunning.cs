@@ -169,7 +169,7 @@ namespace Galaga.GalagaStates {
             // PlayerShot
             playerShots = new EntityContainer<PlayerShot>();
             playerShotImage = new Image(Path.Combine("Assets", "Images", "BulletRed2.png"));
-            // Explosions
+            // Explosion
             explosionStrides = ImageStride.CreateStrides(8, 
                 Path.Combine("Assets", "Images", "Explosion.png"));
             enemyExplosions = new AnimationContainer(8);
