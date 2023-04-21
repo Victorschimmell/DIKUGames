@@ -6,13 +6,19 @@ using DIKUArcade.Math;
 using DIKUArcade.Events;
 using DIKUArcade.Physics;
 using DIKUArcade.GUI;
+using Breakout;
+using Breakout.Blocks;
 using System.Collections.Generic;
 using System.IO;
+using Breakout.LevelLoading;
 
 namespace Breakout.States{
     public class GameRunning : IGameState {
         private static GameRunning instance = null;
         private Player player;
+        private Block block;
+        private ASCIIReader reader;
+        private MapLoader loader;
         public static GameRunning GetInstance() {
             if (GameRunning.instance == null) {
                 GameRunning.instance = new GameRunning();
@@ -55,36 +61,30 @@ namespace Breakout.States{
                                 }
                             );
                         break;
+
+                // TEMPORARY EVENT //
+                case KeyboardKey.F:
+                    block.TakeDamage();
+                    loader.Blocks.Iterate(block => {
+                        block.TakeDamage();
+                    });
+                    break;
+                /////////////////////
             }
         }
-
-        /*private void KeyRelease(KeyboardKey key) {
-            GameEvent MoveStopLeftRight = new GameEvent{
-                EventType = GameEventType.MovementEvent,
-                Message = "MoveStopLeftRight"};
-            switch (key) {
-                case KeyboardKey.Left:
-                    BreakoutBus.GetBus().RegisterEvent(MoveStopLeftRight);
-                    break;
-                case KeyboardKey.Right:
-                    BreakoutBus.GetBus().RegisterEvent(MoveStopLeftRight);
-                    break;
-            }
-        }*/
 
         void IGameState.HandleKeyEvent(KeyboardAction action, KeyboardKey key) {
             switch (action) {
                 case KeyboardAction.KeyPress:
                     KeyPress(key);
                     break;
-                /*case KeyboardAction.KeyRelease:
-                    KeyRelease(key);
-                    break;*/
             }
         }
 
         public void RenderState(){
             player.Render();
+            block.Render();
+            loader.Blocks.RenderEntities();
         }
 
         public void ResetState(){
@@ -94,6 +94,7 @@ namespace Breakout.States{
                     EventType = GameEventType.MovementEvent,
                     Message = "MoveStopAll"
                 });
+            loader = null;
         }
 
         public void UpdateState(){
@@ -101,6 +102,10 @@ namespace Breakout.States{
                 EventType = GameEventType.MovementEvent,
                 Message = "MoveAll"
             });
+            if (block.IsDeleted()){
+                player.AddPoints(block.Value);
+                block = new YellowBlock(new DynamicShape(new Vec2F(0.4f, 0.8f), new Vec2F(0.1f, 0.03f)));
+            }
         }
 
         private void InitializeGameState() {
@@ -110,6 +115,12 @@ namespace Breakout.States{
                 new Image(Path.Combine("Assets", "Images", "player.png")));
             // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
+            // Blocks
+            block = new GreyBlock(
+                new DynamicShape(new Vec2F(0.4f, 0.8f), new Vec2F(0.1f, 0.03f)));
+            reader = new ASCIIReader(Path.Combine("Assets", "Levels", "level1.txt"));
+            loader = new MapLoader(reader);
+            loader.LoadBlocks();
         }
     }
 }
