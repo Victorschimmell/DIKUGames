@@ -23,6 +23,7 @@ namespace Breakout.LevelLoading {
                     indexMinLoad = currentIndex;
                 } else if (line.Contains("Map")) {
                     indexMaxLoad = currentIndex;
+                    break;
                 } 
                 currentIndex++;
             }

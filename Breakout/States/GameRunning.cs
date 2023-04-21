@@ -17,8 +17,8 @@ namespace Breakout.States{
         private static GameRunning instance = null;
         private Player player;
         private Block block;
-        private ASCIIReader reader;
-        private MapLoader loader;
+        private ASCIIReader fileReader;
+        private MapLoader fileLoader;
         public static GameRunning GetInstance() {
             if (GameRunning.instance == null) {
                 GameRunning.instance = new GameRunning();
@@ -64,8 +64,7 @@ namespace Breakout.States{
 
                 // TEMPORARY EVENT //
                 case KeyboardKey.F:
-                    block.TakeDamage();
-                    loader.Blocks.Iterate(block => {
+                    fileLoader.Blocks.Iterate(block => {
                         block.TakeDamage();
                     });
                     break;
@@ -83,8 +82,7 @@ namespace Breakout.States{
 
         public void RenderState(){
             player.Render();
-            block.Render();
-            loader.Blocks.RenderEntities();
+            fileLoader.Blocks.RenderEntities();
         }
 
         public void ResetState(){
@@ -94,7 +92,7 @@ namespace Breakout.States{
                     EventType = GameEventType.MovementEvent,
                     Message = "MoveStopAll"
                 });
-            loader = null;
+            fileLoader = null;
         }
 
         public void UpdateState(){
@@ -102,25 +100,19 @@ namespace Breakout.States{
                 EventType = GameEventType.MovementEvent,
                 Message = "MoveAll"
             });
-            if (block.IsDeleted()){
-                player.AddPoints(block.Value);
-                block = new YellowBlock(new DynamicShape(new Vec2F(0.4f, 0.8f), new Vec2F(0.1f, 0.03f)));
-            }
         }
 
         private void InitializeGameState() {
             // Player
             player = new Player(
-                new DynamicShape(new Vec2F(0.4f, 0.1f), new Vec2F(0.2f, 0.05f)),
+                new DynamicShape(new Vec2F(0.425f, 0.1f), new Vec2F(0.15f, 0.02f)),
                 new Image(Path.Combine("Assets", "Images", "player.png")));
             // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
             // Blocks
-            block = new GreyBlock(
-                new DynamicShape(new Vec2F(0.4f, 0.8f), new Vec2F(0.1f, 0.03f)));
-            reader = new ASCIIReader(Path.Combine("Assets", "Levels", "level1.txt"));
-            loader = new MapLoader(reader);
-            loader.LoadBlocks();
+            fileReader = new ASCIIReader(Path.Combine("Assets", "Levels", "central-mass.txt"));
+            fileLoader = new MapLoader(fileReader);
+            fileLoader.LoadBlocks();
         }
     }
 }

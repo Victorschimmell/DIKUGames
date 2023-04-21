@@ -29,9 +29,9 @@ namespace Breakout.LevelLoading {
                 for (int i = 0; i < length; i++) {
                     foreach (KeyValuePair<string, string> value in legend) {
                         if (value.Key == individualSymbols[i].ToString()) {
-                            Vec2F pos = new Vec2F(((1.0f / length - 0.05f) + (i * 0.1f)), 
-                            (1f - 0.03f * currentHeight));
-                            CreateBlock((new DynamicShape(pos, new Vec2F(0.1f, 0.03f))), value.Value);
+                            Vec2F pos = new Vec2F(((1.0f / length - 0.06f) + (i * 0.08f)), 
+                            (0.95f - 0.025f * currentHeight));
+                            CreateBlock((new DynamicShape(pos, new Vec2F(0.08f, 0.025f))), value.Value);
                         }
                     }
                 }
