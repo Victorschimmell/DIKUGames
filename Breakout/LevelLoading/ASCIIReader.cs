@@ -21,21 +21,18 @@ namespace Breakout.LevelLoading {
             foreach (string line in lines) {
                 if (line  == "Map:") {
                     indexMinLoad = currentIndex;
-                } else if (line.Contains("Map")) {
+                } else if (line == "Map/") {
                     indexMaxLoad = currentIndex;
                     break;
                 } 
                 currentIndex++;
             }
 
-            if (indexMaxLoad < indexMinLoad) {
-                throw new Exception("Invalid ASCII file, Map does not work");
-            }
-
-            // Save the map in the List 'map'
             map = new List<string>();
-            for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
-                map.Add(lines[i]);
+            if (indexMaxLoad > indexMinLoad) {
+                for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
+                    map.Add(lines[i]);
+                }
             }
 
 
@@ -46,19 +43,17 @@ namespace Breakout.LevelLoading {
             foreach (string line in lines) {
                 if (line  == "Meta:") {
                     indexMinLoad = currentIndex;
-                } else if (line.Contains("Meta")) {
+                } else if (line == "Meta/") {
                     indexMaxLoad = currentIndex;
                 } 
                 currentIndex++;
             }
 
-            if (indexMaxLoad < indexMinLoad) {
-                throw new Exception("Invalid ASCII file, Meta does not work");
-            }
-
             meta = new List<string>();
-            for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
-                meta.Add(lines[i]);
+            if (indexMaxLoad > indexMinLoad) {
+                for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
+                    meta.Add(lines[i]);
+                }
             }
 
             // Legend
@@ -68,23 +63,21 @@ namespace Breakout.LevelLoading {
             foreach (string line in lines) {
                 if (line  == "Legend:") {
                     indexMinLoad = currentIndex;
-                } else if (line.Contains("Legend")) {
+                } else if (line == "Legend/") {
                     indexMaxLoad = currentIndex;
                 } 
                 currentIndex++;
             }
 
-            if (indexMaxLoad < indexMinLoad) {
-                throw new Exception("Invalid ASCII file, Legend does not work");
-            }
-
             legend = new Dictionary<string, string>();
-            for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
-                string[] legendLines = lines[i].Split(") ");
-                if (legendLines.Length == 2){
-                    legend.Add(legendLines[0], legendLines[1]);
-                } else {
-                    throw new Exception("Invalid ASCII file, Legend does not work");
+            if (indexMaxLoad > indexMinLoad) {
+                for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
+                    string[] legendLines = lines[i].Split(") ");
+                    if (legendLines.Length == 2){
+                        legend.Add(legendLines[0], legendLines[1]);
+                    } else {
+                        throw new Exception("Invalid ASCII file, Legend does not work");
+                    }
                 }
             }
 
