@@ -9,7 +9,6 @@ using DIKUArcade.GUI;
 using Breakout;
 using Breakout.Blocks;
 using System.Collections.Generic;
-using System.IO;
 using Breakout.LevelLoading;
 
 namespace Breakout.States{
@@ -109,10 +108,20 @@ namespace Breakout.States{
                 new Image(Path.Combine("Assets", "Images", "player.png")));
             // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
-            // Blocks
-            fileReader = new ASCIIReader(Path.Combine("Assets", "Levels", "central-mass.txt"));
-            fileLoader = new MapLoader(fileReader);
-            fileLoader.LoadBlocks();
+            // Map
+            SetMap(Path.Combine("Assets", "Levels", "level1.txt"));
+        }
+
+        private void SetMap(string mapName) {
+            if (File.Exists(mapName)) {
+                fileLoader = new MapLoader(new ASCIIReader(mapName));
+                fileLoader.LoadBlocks();
+            } else {
+                // Sets map to default map, if the specified map doesn't exist
+                fileLoader = new MapLoader(new ASCIIReader(
+                    Path.Combine("Assets", "Levels", "central-mass.txt")));
+                fileLoader.LoadBlocks();
+            }
         }
     }
 }

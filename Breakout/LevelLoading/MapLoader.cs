@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
-using System;
-using DIKUArcade.Graphics;
 using DIKUArcade.Entities;
 using DIKUArcade.Math;
 using Breakout.Blocks;
@@ -12,6 +9,7 @@ namespace Breakout.LevelLoading {
         private List<string> map;
         private List<string> meta;
         private Dictionary<string, string> legend;
+        private ASCIIReader fileReader;
         public MapLoader(ASCIIReader reader) {
             map = reader.GetMap();
             meta = reader.GetMeta();
