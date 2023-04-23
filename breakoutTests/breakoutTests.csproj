@@ -16,4 +16,9 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Breakout\Breakout.csproj" />
+    <ProjectReference Include="..\DIKUArcade\DIKUArcade\DIKUArcade.csproj" />
+  </ItemGroup>
+
 </Project>

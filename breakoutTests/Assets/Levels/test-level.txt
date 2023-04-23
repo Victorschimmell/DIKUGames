@@ -1,0 +1,14 @@
+Map:
+------------
+000Y----Y000
+------------
+Map/
+
+Meta:
+Name: TEST LEVEL
+Meta/
+
+Legend:
+0) orange-block.png
+Y) brown-block.png
+Legend/

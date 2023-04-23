@@ -11,12 +11,10 @@ using Breakout.Blocks;
 using System.Collections.Generic;
 using Breakout.LevelLoading;
 
-namespace Breakout.States{
+namespace Breakout.States {
     public class GameRunning : IGameState {
         private static GameRunning instance = null;
         private Player player;
-        private Block block;
-        private ASCIIReader fileReader;
         private MapLoader fileLoader;
         public static GameRunning GetInstance() {
             if (GameRunning.instance == null) {
@@ -65,6 +63,9 @@ namespace Breakout.States{
                 case KeyboardKey.F:
                     fileLoader.Blocks.Iterate(block => {
                         block.TakeDamage();
+                        /*if (block.IsDeleted()) {
+                            player.AddPoints(block.Value);
+                        }*/
                     });
                     break;
                 /////////////////////
@@ -109,7 +110,7 @@ namespace Breakout.States{
             // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
             // Map
-            SetMap(Path.Combine("Assets", "Levels", "level1.txt"));
+            SetMap(Path.Combine("Assets", "Levels", "level3.txt"));
         }
 
         private void SetMap(string mapName) {

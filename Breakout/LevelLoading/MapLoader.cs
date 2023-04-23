@@ -9,7 +9,6 @@ namespace Breakout.LevelLoading {
         private List<string> map;
         private List<string> meta;
         private Dictionary<string, string> legend;
-        private ASCIIReader fileReader;
         public MapLoader(ASCIIReader reader) {
             map = reader.GetMap();
             meta = reader.GetMeta();

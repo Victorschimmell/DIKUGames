@@ -95,8 +95,8 @@ namespace Breakout{
             }
         }
 
-        public void AddPoints(int points) {
-            this.points = this.points + points;
+        public void AddPoints(int p) {
+            points = points + p;
         }
     }
 }
