@@ -45,5 +45,9 @@ namespace Breakout.Blocks {
         public int GetHealth() {
             return health;
         }
+
+        public bool IsDamaged() {
+            return isDamaged;
+        }
     }
 }

@@ -22,5 +22,23 @@ namespace BreakoutTests.EntityTests {
         public void TestHealth() {
             Assert.That(blueBlock.GetHealth() == 15);
         }
+
+        [Test]
+        public void TestDamaged() {
+            Assert.That(blueBlock.IsDamaged() == false);
+            for (int i = 0; i <= 8; i++) {
+                blueBlock.TakeDamage();
+            }
+            Assert.That(blueBlock.IsDamaged() == true);
+        }
+
+        [Test]
+        public void TestDeadBlock() {
+            Assert.That(blueBlock.IsDeleted() == false);
+            for(int i = 0; i < 15; i++) {
+                blueBlock.TakeDamage();
+            }
+            Assert.That(blueBlock.IsDeleted() == true);
+        }
     }
 }
