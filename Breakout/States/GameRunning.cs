@@ -109,11 +109,17 @@ namespace Breakout.States {
             // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
             // Map
-            SetMap(Path.Combine("Assets", "Levels", "test.txt"));
+            SetMap(Path.Combine("Assets", "Levels", "central-mss.txt"));
         }
 
         private void SetMap(string mapName) {
-            fileLoader = new MapLoader(new ASCIIReader(mapName));
+            if (File.Exists(mapName)) {
+                fileLoader = new MapLoader(new ASCIIReader(mapName));
+            } else {
+                // Default map if map doesn't exist
+                fileLoader = new MapLoader(new ASCIIReader(
+                    Path.Combine("Assets", "Levels", "central-mass.txt")));
+            }
             fileLoader.LoadBlocks();
         }
     }

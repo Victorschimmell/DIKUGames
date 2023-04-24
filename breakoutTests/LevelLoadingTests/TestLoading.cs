@@ -38,7 +38,8 @@ namespace BreakoutTests.LevelLoadingTests {
         public void TestBlockCorrectPosition() {
             float i = 0;
             loader.Blocks.Iterate(block => {
-                Vec2F expectedPos = new Vec2F(((1.0f / 12f - 0.06f) + (i * 0.08f)), (0.95f - 0.025f * 2f));
+                Vec2F expectedPos = new Vec2F((0.5f - (12f / 2f * 0.08f) + (i * 0.08f)), 
+                (0.95f - 0.025f * 2f));
                 Assert.That(expectedPos.ToString() == block.GetPosition().ToString());
                 // Skips the row "----" with empty positions in the file
                 if(i == 3) {

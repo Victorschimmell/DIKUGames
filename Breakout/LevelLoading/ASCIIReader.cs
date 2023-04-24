@@ -7,14 +7,13 @@ using Breakout.Blocks;
 
 namespace Breakout.LevelLoading {
     public class ASCIIReader {
-        private string[] fileLines;
         private readonly Dictionary<string, string> legend;
         private readonly List<string> map;
         private readonly List<string> meta;
         public ASCIIReader(string fileName) {
             if (File.Exists(fileName)) {
                 // Loading all lines from the file
-                fileLines = File.ReadAllLines(fileName);
+                string[] fileLines = File.ReadAllLines(fileName);
                 
                 // Finding the upper- and lowerbound of the map in the file
                 int currentIndex = 0;
