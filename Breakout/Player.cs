@@ -24,8 +24,9 @@ namespace Breakout{
         }
 
         public void Move() {
-            if (shape.Direction.X + shape.Position.X >= 0f && shape.Direction.X + shape.Position.X <= 1f-shape.Extent.X) {
-                Shape.MoveX(shape.Direction.X);
+            if (shape.Direction.X + shape.Position.X >= 0f && shape.Direction.X + shape.Position.X 
+                <= 1f-shape.Extent.X) {
+                    Shape.MoveX(shape.Direction.X);
             } else if (shape.Direction.X + shape.Position.X < 0f) {
                 BreakoutBus.GetBus().RegisterEvent(new GameEvent{
                     EventType = GameEventType.MovementEvent,
