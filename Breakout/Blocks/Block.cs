@@ -1,6 +1,7 @@
 using DIKUArcade.Entities;
 using DIKUArcade.Graphics;
 using DIKUArcade.Math;
+using System.IO;
 
 namespace Breakout.Blocks {
     public class Block : Entity {
@@ -32,7 +33,7 @@ namespace Breakout.Blocks {
             if (health <= 0) {
                 DeleteEntity();
             }
-            if (!isDamaged && health <= startHealth / 2) {
+            if (!isDamaged && health <= Math.Ceiling((double)startHealth / 2)) {
                 Image = alternativeImage;
                 isDamaged = true;
             }
