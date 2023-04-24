@@ -58,17 +58,16 @@ namespace Breakout.States {
                                 }
                             );
                         break;
-
-                // TEMPORARY EVENT //
+                // TEMPORARY EVENT TO TEST BREAKAGE OF BLOCKS //
                 case KeyboardKey.F:
                     fileLoader.Blocks.Iterate(block => {
                         block.TakeDamage();
-                        /*if (block.IsDeleted()) {
+                        if (block.IsDeleted()) {
                             player.AddPoints(block.Value);
-                        }*/
+                        }
                     });
                     break;
-                /////////////////////
+                ////////////////////////////////////////////////
             }
         }
 

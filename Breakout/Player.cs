@@ -28,14 +28,14 @@ namespace Breakout{
                 Shape.MoveX(shape.Direction.X);
             } else if (shape.Direction.X + shape.Position.X < 0f) {
                 BreakoutBus.GetBus().RegisterEvent(new GameEvent{
-                                    EventType = GameEventType.MovementEvent,
-                                    Message = "MoveRight"
-                                });
+                    EventType = GameEventType.MovementEvent,
+                    Message = "MoveRight"
+                });
             } else if (shape.Direction.X + shape.Position.X > 1f-shape.Extent.X) {
                 BreakoutBus.GetBus().RegisterEvent(new GameEvent{
-                                    EventType = GameEventType.MovementEvent,
-                                    Message = "MoveLeft"
-                                });
+                    EventType = GameEventType.MovementEvent,
+                    Message = "MoveLeft"
+                });
             }
         }
 
