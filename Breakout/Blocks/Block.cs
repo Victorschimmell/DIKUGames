@@ -37,5 +37,13 @@ namespace Breakout.Blocks {
                 isDamaged = true;
             }
         }
+
+        public Vec2F GetPosition() {
+            return position;
+        }
+
+        public int GetHealth() {
+            return health;
+        }
     }
 }

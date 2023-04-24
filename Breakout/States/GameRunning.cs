@@ -114,15 +114,8 @@ namespace Breakout.States {
         }
 
         private void SetMap(string mapName) {
-            if (File.Exists(mapName)) {
-                fileLoader = new MapLoader(new ASCIIReader(mapName));
-                fileLoader.LoadBlocks();
-            } else {
-                // Sets map to default map, if the specified map doesn't exist
-                fileLoader = new MapLoader(new ASCIIReader(
-                    Path.Combine("Assets", "Levels", "central-mass.txt")));
-                fileLoader.LoadBlocks();
-            }
+            fileLoader = new MapLoader(new ASCIIReader(mapName));
+            fileLoader.LoadBlocks();
         }
     }
 }
