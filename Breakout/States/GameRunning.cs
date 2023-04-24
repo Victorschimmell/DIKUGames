@@ -109,7 +109,7 @@ namespace Breakout.States {
             // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
             // Map
-            SetMap(Path.Combine("Assets", "Levels", "level3.txt"));
+            SetMap(Path.Combine("Assets", "Levels", "test.txt"));
         }
 
         private void SetMap(string mapName) {

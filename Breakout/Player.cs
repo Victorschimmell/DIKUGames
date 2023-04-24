@@ -9,7 +9,7 @@ namespace Breakout{
         private float moveLeft;
         private float moveRight;
         private int points;
-        const float MOVEMENT_SPEED = 0.01f;
+        const float MOVEMENT_SPEED = 0.015f;
         public Player(DynamicShape shape, IBaseImage image): base(shape, image){
             this.shape = shape;
             moveLeft = 0.0f;
