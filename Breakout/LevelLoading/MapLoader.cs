@@ -16,7 +16,7 @@ namespace Breakout.LevelLoading {
             Blocks = new EntityContainer<Block>();
         }
 
-        public void LoadBlocks(){
+        public void LoadBlocks() {
             int currentHeight = 0;
             int mapHeight = map.Count();
             foreach (string line in map) {
@@ -35,8 +35,8 @@ namespace Breakout.LevelLoading {
             }
         }
 
-        public void CreateBlock(DynamicShape shape, string color){
-            switch(color){
+        public void CreateBlock(DynamicShape shape, string color) {
+            switch(color) {
                 case "grey-block.png":
                     Blocks.AddEntity(new GreyBlock(shape));
                     break;

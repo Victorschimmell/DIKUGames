@@ -79,12 +79,12 @@ namespace Breakout.States {
             }
         }
 
-        public void RenderState(){
+        public void RenderState() {
             player.Render();
             fileLoader.Blocks.RenderEntities();
         }
 
-        public void ResetState(){
+        public void ResetState() {
             player.Shape.SetPosition(new Vec2F(0.45f, 0.1f));
             BreakoutBus.GetBus().RegisterEvent(
                 new GameEvent{
@@ -94,7 +94,7 @@ namespace Breakout.States {
             fileLoader = null;
         }
 
-        public void UpdateState(){
+        public void UpdateState() {
             BreakoutBus.GetBus().RegisterEvent(new GameEvent {
                 EventType = GameEventType.MovementEvent,
                 Message = "MoveAll"
@@ -102,13 +102,10 @@ namespace Breakout.States {
         }
 
         private void InitializeGameState() {
-            // Player
             player = new Player(
                 new DynamicShape(new Vec2F(0.425f, 0.1f), new Vec2F(0.15f, 0.02f)),
                 new Image(Path.Combine("Assets", "Images", "player.png")));
-            // EventBus
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
-            // Map
             SetMap(Path.Combine("Assets", "Levels", "central-mss.txt"));
         }
 
@@ -116,7 +113,7 @@ namespace Breakout.States {
             if (File.Exists(mapName)) {
                 fileLoader = new MapLoader(new ASCIIReader(mapName));
             } else {
-                // Default map if map doesn't exist
+                // Default map if mapName doesn't exist
                 fileLoader = new MapLoader(new ASCIIReader(
                     Path.Combine("Assets", "Levels", "central-mass.txt")));
             }
