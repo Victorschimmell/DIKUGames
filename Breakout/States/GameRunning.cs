@@ -66,6 +66,9 @@ namespace Breakout.States {
                             player.AddPoints(block.Value);
                         }
                     });
+                    if (fileLoader.Blocks.CountEntities() == 0) {
+                        SetMap(Path.Combine("Assets", "Levels", "level3.txt"));
+                    }
                     break;
                 ////////////////////////////////////////////////
             }
@@ -106,7 +109,7 @@ namespace Breakout.States {
                 new DynamicShape(new Vec2F(0.425f, 0.1f), new Vec2F(0.15f, 0.02f)),
                 new Image(Path.Combine("Assets", "Images", "player.png")));
             BreakoutBus.GetBus().Subscribe(GameEventType.MovementEvent, player);
-            SetMap(Path.Combine("Assets", "Levels", "central-mss.txt"));
+            SetMap(Path.Combine("Assets", "Levels", "level1.txt"));
         }
 
         private void SetMap(string mapName) {
