@@ -9,7 +9,7 @@ namespace Breakout.LevelLoading {
     public class ASCIIReader {
         private readonly Dictionary<string, string> legend;
         private readonly List<string> map;
-        private readonly List<string> meta;
+        private readonly Dictionary<string, string> meta;
         public ASCIIReader(string fileName) {
             if (File.Exists(fileName)) {
                 // Loading all lines from the file
@@ -50,10 +50,13 @@ namespace Breakout.LevelLoading {
                     currentIndex++;
                 }
 
-                meta = new List<string>();
+                meta = new Dictionary<string, string>();
                 if (indexMaxLoad > indexMinLoad) {
                     for (int i = indexMinLoad + 1; i < indexMaxLoad; i++) {
-                        meta.Add(fileLines[i]);
+                        string[] metaLines = fileLines[i].Split(": ");
+                        if (metaLines.Length == 2){
+                            meta.Add(metaLines[0], metaLines[1]);
+                        }
                     }
                 }
 
@@ -82,7 +85,7 @@ namespace Breakout.LevelLoading {
             }
         }
 
-        public List<string> GetMeta() {
+        public Dictionary<string, string> GetMeta() {
             return meta;
         }
 

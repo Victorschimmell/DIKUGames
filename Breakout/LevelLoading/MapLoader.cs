@@ -7,7 +7,7 @@ namespace Breakout.LevelLoading {
     public class MapLoader {
         public EntityContainer<Block> Blocks {get;}
         private List<string> map;
-        private List<string> meta;
+        private Dictionary<string, string> meta;
         private Dictionary<string, string> legend;
         public MapLoader(ASCIIReader reader) {
             map = reader.GetMap();
