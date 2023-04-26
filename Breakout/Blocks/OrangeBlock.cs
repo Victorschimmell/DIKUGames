@@ -9,7 +9,7 @@ namespace Breakout.Blocks {
             new Image(Path.Combine("Assets", "Images", "orange-block-damaged.png"))) {
                 health = 6;
                 startHealth = health;
-                value = 50;
+                value = 20;
             }
     }
 }

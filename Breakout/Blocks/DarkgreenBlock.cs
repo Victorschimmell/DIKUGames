@@ -7,7 +7,7 @@ namespace Breakout.Blocks {
         public DarkgreenBlock(DynamicShape shape) 
             : base(shape, new Image(Path.Combine("Assets", "Images", "darkgreen-block.png")), 
             new Image(Path.Combine("Assets", "Images", "darkgreen-block-damaged.png"))) {
-                health = 12;
+                health = 10;
                 startHealth = health;
                 value = 300;
             }

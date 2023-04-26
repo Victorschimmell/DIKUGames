@@ -13,9 +13,9 @@ namespace Breakout.LevelLoading {
         private List<string> map;
         private Dictionary<string, string> meta;
         public ASCIIReader(string fileName) {
-            currentFile = fileName;
             if (File.Exists(fileName)) {
                 fileLines = File.ReadAllLines(fileName);
+                currentFile = fileName;
             }
         }
 

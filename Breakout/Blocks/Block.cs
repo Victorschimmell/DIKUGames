@@ -33,7 +33,7 @@ namespace Breakout.Blocks {
             if (health <= 0) {
                 DeleteEntity();
             }
-            if (!isDamaged && health <= Math.Ceiling((double)startHealth / 2)) {
+            if (!isDamaged && startHealth/2 >= health) {
                 Image = alternativeImage;
                 isDamaged = true;
             }
