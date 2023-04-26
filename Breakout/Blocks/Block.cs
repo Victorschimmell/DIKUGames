@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Breakout.Blocks {
     public class Block : Entity {
-        internal int startHealth;
+        internal int fullHealth;
         internal int health;
         internal int value;
         public int Value {get {return value;}}
@@ -15,7 +15,7 @@ namespace Breakout.Blocks {
         public Block(DynamicShape shape, IBaseImage image, IBaseImage alternativeImage) 
             : base(shape, image) {
                 health = 2;
-                startHealth = health;
+                fullHealth = health;
                 value = 5;
                 position = new Vec2F(shape.Position.X, shape.Position.Y);
                 this.alternativeImage = alternativeImage;
@@ -33,7 +33,7 @@ namespace Breakout.Blocks {
             if (health <= 0) {
                 DeleteEntity();
             }
-            if (!isDamaged && startHealth/2 >= health) {
+            if (!isDamaged && fullHealth/2 >= health) {
                 Image = alternativeImage;
                 isDamaged = true;
             }

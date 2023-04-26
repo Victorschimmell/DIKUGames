@@ -8,7 +8,7 @@ namespace Breakout.Blocks {
             : base(shape, new Image(Path.Combine("Assets", "Images", "red-block.png")), 
             new Image(Path.Combine("Assets", "Images", "red-block-damaged.png"))) {
                 health = 15;
-                startHealth = health;
+                fullHealth = health;
                 value = 750;
             }
     }

@@ -65,7 +65,7 @@ namespace Breakout.States {
                         }
                     });
                     if (fileLoader.Blocks.CountEntities() == 0) {
-                        SetMap(Path.Combine("Assets", "Levels", "level3.txt"));
+                        SetMap(Path.Combine("Assets", "Levels", "level2.txt"));
                     }
                     break;
                 ////////////////////////////////////////////////
