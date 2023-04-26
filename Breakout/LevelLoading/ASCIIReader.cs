@@ -14,8 +14,12 @@ namespace Breakout.LevelLoading {
         private Dictionary<string, string> meta;
         public ASCIIReader(string fileName) {
             if (File.Exists(fileName)) {
-                fileLines = File.ReadAllLines(fileName);
                 currentFile = fileName;
+                fileLines = File.ReadAllLines(currentFile);
+            } else {
+                // Default map if the file fileName doesn't exist
+                currentFile = Path.Combine("Assets", "Levels", "central-mass.txt");
+                fileLines = File.ReadAllLines(currentFile);
             }
         }
 
@@ -39,7 +43,6 @@ namespace Breakout.LevelLoading {
                     map.Add(fileLines[i]);
                 }
             }
-
             return map;
         }
 
@@ -65,7 +68,6 @@ namespace Breakout.LevelLoading {
                     }
                 }
             }
-
             return meta;
         }
 
@@ -91,7 +93,6 @@ namespace Breakout.LevelLoading {
                     }
                 }
             }
-
             return legend;
         }
 
