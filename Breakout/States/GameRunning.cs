@@ -28,36 +28,34 @@ namespace Breakout.States {
             switch (key) {
                 case KeyboardKey.Left:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent{
-                                    EventType = GameEventType.MovementEvent,
-                                    Message = "MoveLeft"
-                                });
+                        EventType = GameEventType.MovementEvent,
+                        Message = "MoveLeft"
+                    });
                     break;
                 case KeyboardKey.A:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent{
-                                    EventType = GameEventType.MovementEvent,
-                                    Message = "MoveLeft"
-                                });
+                        EventType = GameEventType.MovementEvent,
+                        Message = "MoveLeft"
+                    });
                     break;
                 case KeyboardKey.Right:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent{
-                                    EventType = GameEventType.MovementEvent,
-                                    Message = "MoveRight"
-                                });
+                        EventType = GameEventType.MovementEvent,
+                        Message = "MoveRight"
+                    });
                     break;
                 case KeyboardKey.D:
                     BreakoutBus.GetBus().RegisterEvent(new GameEvent{
-                                    EventType = GameEventType.MovementEvent,
-                                    Message = "MoveRight"
-                                });
+                        EventType = GameEventType.MovementEvent,
+                        Message = "MoveRight"
+                    });
                     break;
                 case KeyboardKey.Escape:
-                    BreakoutBus.GetBus().RegisterEvent(
-                                new GameEvent{
-                                    EventType = GameEventType.WindowEvent,
-                                    Message = "CloseWindow",
-                                }
-                            );
-                        break;
+                    BreakoutBus.GetBus().RegisterEvent(new GameEvent{
+                        EventType = GameEventType.WindowEvent,
+                        Message = "CloseWindow",
+                    });
+                    break;
                 // TEMPORARY EVENT TO TEST BREAKAGE OF BLOCKS //
                 case KeyboardKey.F:
                     fileLoader.Blocks.Iterate(block => {
@@ -113,13 +111,7 @@ namespace Breakout.States {
         }
 
         private void SetMap(string mapName) {
-            if (File.Exists(mapName)) {
-                fileLoader = new MapLoader(new ASCIIReader(mapName));
-            } else {
-                // Default map if mapName-file doesn't exist
-                fileLoader = new MapLoader(new ASCIIReader(
-                    Path.Combine("Assets", "Levels", "central-mass.txt")));
-            }
+            fileLoader = new MapLoader(new ASCIIReader(mapName));
             fileLoader.LoadBlocks();
         }
     }
