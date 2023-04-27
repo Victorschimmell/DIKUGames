@@ -35,11 +35,25 @@ namespace BreakoutTests.LevelLoadingTests {
         }
 
         [Test]
+        public void TestCorrectBlockType() {
+            // Test uses the values of the block types, which are all different to determine
+            // if a block is the same.
+            List<int> targetBlockTypes = new List<int>{20, 20, 20, 200, 200, 20, 20, 20};
+            List<int> blockTypes = new List<int>();
+            loader.Blocks.Iterate(block => {
+                blockTypes.Add(block.Value);
+            });
+            for (int i = 0; i < blockTypes.Count; i++) {
+                Assert.That(blockTypes[i] == targetBlockTypes[i]);
+            }
+        }
+
+        [Test]
         public void TestBlockCorrectPosition() {
             float i = 0;
             loader.Blocks.Iterate(block => {
                 Vec2F expectedPos = new Vec2F((0.5f - (12f / 2f * 0.08f) + (i * 0.08f)), 
-                (0.95f - 0.025f * 2f));
+                (1f - 0.025f * 2f));
                 Assert.That(expectedPos.ToString() == block.GetPosition().ToString());
                 // Skips the row "----" with empty positions in the file
                 if(i == 3) {

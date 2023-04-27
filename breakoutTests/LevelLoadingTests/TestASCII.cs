@@ -80,17 +80,18 @@ namespace BreakoutTests.LevelLoadingTests {
 
         [Test]
         public void TestMeta() {
-            List<string> targetMeta = new List<string>();
-            targetMeta.Add("Name: TEST LEVEL");
-            List<string> meta = reader.GetMeta();
+            Dictionary<string, string> targetMeta = new Dictionary<string, string>();
+            targetMeta.Add("Name", "TEST LEVEL");
+            Dictionary<string, string> meta = reader.GetMeta();
             for (int i = 0; i < meta.Count; i++) {
-                Assert.That(meta[i] == targetMeta[i]);
+                Assert.That(meta.ElementAt(i).Key == targetMeta.ElementAt(i).Key);
+                Assert.That(meta.ElementAt(i).Value == targetMeta.ElementAt(i).Value);
             }
         }
 
         [Test]
         public void TestBrokenMeta() {
-            List<string> brokenMeta = brokenFileReader.GetMeta();
+            Dictionary<string, string> brokenMeta = brokenFileReader.GetMeta();
             Assert.NotNull(brokenMeta);
         }
 

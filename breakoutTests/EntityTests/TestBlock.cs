@@ -20,13 +20,13 @@ namespace BreakoutTests.EntityTests {
 
         [Test]
         public void TestHealth() {
-            Assert.That(blueBlock.GetHealth() == 15);
+            Assert.That(blueBlock.GetHealth() == 4);
         }
 
         [Test]
         public void TestDamaged() {
             Assert.That(blueBlock.IsDamaged() == false);
-            for (int i = 0; i <= 8; i++) {
+            for (int i = 0; i <= 2; i++) {
                 blueBlock.TakeDamage();
             }
             Assert.That(blueBlock.IsDamaged() == true);
@@ -35,7 +35,7 @@ namespace BreakoutTests.EntityTests {
         [Test]
         public void TestDeadBlock() {
             Assert.That(blueBlock.IsDeleted() == false);
-            for(int i = 0; i < 15; i++) {
+            for(int i = 0; i < 4; i++) {
                 blueBlock.TakeDamage();
             }
             Assert.That(blueBlock.IsDeleted() == true);
