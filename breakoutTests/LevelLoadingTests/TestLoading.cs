@@ -61,7 +61,7 @@ namespace BreakoutTests.LevelLoadingTests {
                 (1f - 0.025f * 2f));
                 Assert.That(expectedPos.ToString() == block.GetPosition().ToString());
                 // Skips the row "----" with empty positions in the file
-                if(i == 3) {
+                if (i == 3) {
                     i = 8;
                 } else {
                     i++;
