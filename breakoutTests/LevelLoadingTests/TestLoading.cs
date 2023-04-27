@@ -38,6 +38,11 @@ namespace BreakoutTests.LevelLoadingTests {
         public void TestCorrectBlockType() {
             // Test uses the values of the block types, which are all different to determine
             // if a block is the same.
+            // Type "0" = 20, type "Y" = 200
+            // Test map is following:
+            // ------------
+            // 000Y----Y000
+            // ------------
             List<int> targetBlockTypes = new List<int>{20, 20, 20, 200, 200, 20, 20, 20};
             List<int> blockTypes = new List<int>();
             loader.Blocks.Iterate(block => {
