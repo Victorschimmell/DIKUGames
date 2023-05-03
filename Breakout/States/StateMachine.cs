@@ -10,7 +10,6 @@ namespace Breakout.States {
             BreakoutBus.GetBus().Subscribe(GameEventType.InputEvent, this);
             ActiveState = GameRunning.GetInstance();
         }
-
         private void SwitchState(GameStateType stateType) {
             switch (stateType) {
                 case GameStateType.GameRunning:

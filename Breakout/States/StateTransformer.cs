@@ -9,7 +9,7 @@ namespace Breakout.States {
             }
         }
 
-        public static string TransformStringToState(GameStateType type) {
+        public static string TransformStateToString(GameStateType type) {
             switch(type) {
                 case GameStateType.GameRunning:
                     return "GAME_RUNNING";
